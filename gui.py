@@ -9,6 +9,9 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QGridLayout
+
+import pyqtgraph as pg
 
 
 class Ui_MainWindow(object):
@@ -42,8 +45,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         spacerItem = QtWidgets.QSpacerItem(5, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem)
-        self.original_signal_graph = QtWidgets.QWidget(self.centralwidget)
-        self.original_signal_graph.setEnabled(False)
+        self.original_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.original_signal_graph.setMouseEnabled(x=True, y=True) 
+        #self.original_signal_graph.setEnabled(False)
+        #self.original_signal_graph.graph = pg.PlotWidget(self.original_signal_graph)
+        #self.original_signal_graph.graph.setMouseEnabled(x=True, y=True)
+        #Self.original_signal_graph.grid_graph_3 = QGridLayout()
+        #self.original_signal_graph.setLayout(self.original_signal_graph.grid_graph_3)
+        #self.original_signal_graph.grid_graph_3.addWidget(self.original_signal_graph.graph, 0, 0, 1, 1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -54,6 +63,7 @@ class Ui_MainWindow(object):
         self.original_signal_graph.setTabletTracking(True)
         self.original_signal_graph.setAcceptDrops(True)
         self.original_signal_graph.setAutoFillBackground(False)
+        self.original_signal_graph.setBackground((27, 27, 27))
         self.original_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
