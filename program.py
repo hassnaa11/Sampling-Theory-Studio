@@ -10,8 +10,6 @@ from models.sampler import Sampler
 from models.reconstruction import Reconstructor 
 import numpy as np
 
-
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -19,14 +17,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self.ui.open_file_button.clicked.connect(self.open_file)
-
         # Set initial properties
         self.signal = None
         self.sampled_signal = None
         self.reconstructed_signal = None
         self.sampling_curve = None
         self.reconstruct_curve = None
-        self.f_sampling = 700  # this would be changed by the slider
+        self.sampling_frequency = 700 # this would be changed by the slider
+        self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
+
 
     def open_file(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)")
@@ -58,12 +57,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # Sample and reconstruct signal after loading
             self._resample()
-            self._reconstruct()
+            
 
     def _resample(self):
-        
         sampler = Sampler(self.signal)
-        self.sampled_signal = sampler.sample(self.f_sampling)
+        self.sampled_signal = sampler.sample(self.sampling_frequency)
 
         # Clear previous sampling plot 
         if self.sampling_curve is not None:
@@ -77,13 +75,31 @@ class MainWindow(QtWidgets.QMainWindow):
             symbolBrush=pg.mkBrush(255, 0, 0, 255)  # Red 'x' markers
         )
 
+    
+
     def _reconstruct(self):
-        
+        if not self.sampled_signal:
+            return  
+
         reconstructor = Reconstructor(self.sampled_signal)
         
         # Generate time points for reconstruction
+
         t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
-        self.reconstructed_signal = reconstructor.reconstruct(t, self.f_sampling)
+        method = self.ui.methods_comboBox.currentText()
+
+        if method == "whittaker_shannon":
+                    self.reconstructed_signal = reconstructor.reconstruct_shannon(t, self.sampling_frequency)
+        elif method == "Zero-Order Hold":
+                    self.reconstructed_signal = reconstructor.reconstruct_zero_order_hold(t)
+        elif method == "nearest_neighbor":
+                    self.reconstructed_signal=reconstructor.reconstruct_nearest_neighbor(t)
+        elif method == "Linear":
+            self.reconstructed_signal = reconstructor.reconstruct_linear(t)
+        elif method == "Cubic Spline":
+            self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
+
+
 
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
@@ -93,7 +109,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reconstruct_curve = self.ui.reconstructed_signal_graph.plot(
             self.reconstructed_signal.x_vec,
             self.reconstructed_signal.y_vec,
-            pen=pg.mkPen(color=(0, 255, 0))  # Green pen
+
+            pen=pg.mkPen(color=(255, 255, 255))  # Green pen
         )
 
 if __name__ == "__main__":
