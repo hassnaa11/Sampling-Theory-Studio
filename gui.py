@@ -191,7 +191,11 @@ class Ui_MainWindow(object):
                         "}\n"
                         "")
         self.methods_comboBox.setObjectName("methods_comboBox")
-        self.methods_comboBox.addItems(["whittaker_shannon", "Zero-Order Hold", "nearest_neighbor"])
+        self.methods_comboBox.addItem("Linear")
+        self.methods_comboBox.addItem("whittaker_shannon")
+        self.methods_comboBox.addItem("Cubic Spline")
+        self.methods_comboBox.addItem("nearest_neighbor")
+        self.methods_comboBox.addItem("Zero-Order Hold")
         self.horizontalLayout_2.addWidget(self.methods_comboBox)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
