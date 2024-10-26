@@ -35,7 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.plot_csv_data(file_name)
 
     def plot_csv_data(self, file_name):
-        df = pd.read_csv(file_name, header=None)  # Read CSV without a header
+        df = pd.read_csv(file_name, header=None, nrows=1150)  # Read CSV without a header
         df.columns = ['x', 'y']
 
         if 'x' in df.columns and 'y' in df.columns:
