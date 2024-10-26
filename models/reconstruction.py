@@ -33,12 +33,23 @@ class Reconstructor:
         return signal(t, y_interp, signalType.CONTINUOUS)
     
     def reconstruct_zero_order_hold(self, t: np.ndarray):
-        x_vec = self.sampled_signal.x_vec
-        y_vec = self.sampled_signal.y_vec
+        x_vec = self.sampled_signal.x_vec  # Discrete time points of sampled signal
+        y_vec = self.sampled_signal.y_vec  # Discrete sample values
 
-        # Zero-Order Hold (Step function interpolation)
-        y_interp = np.interp(t, x_vec, y_vec, left=None, right=None)
-        
+        # Initialize array for interpolated values
+        y_interp = np.zeros_like(t)
+
+        # Loop over each interval between samples and hold the previous sample's value
+        for i in range(len(x_vec) - 1):
+            # Find indices in `t` that fall within the current interval
+            indices = (t >= x_vec[i]) & (t < x_vec[i + 1])
+            # Assign the value of `y_vec[i]` to all points in this interval
+            y_interp[indices] = y_vec[i]
+
+        # For the final interval, hold the last sample's value
+        y_interp[t >= x_vec[-1]] = y_vec[-1]
+
+        # Return the reconstructed signal as a continuous-type signal
         return signal(np.array(t), np.array(y_interp), signalType.CONTINUOUS)
     
     def reconstruct_nearest_neighbor(self, t: np.ndarray):

@@ -23,7 +23,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reconstructed_signal = None
         self.sampling_curve = None
         self.reconstruct_curve = None
-
         self.sampling_frequency = 700 # this would be changed by the slider
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
 
@@ -111,7 +110,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reconstructed_signal.x_vec,
             self.reconstructed_signal.y_vec,
 
-            pen=pg.mkPen(color=(0, 255, 0))  # Green pen
+            pen=pg.mkPen(color=(255, 255, 255))  # Green pen
         )
 
 if __name__ == "__main__":
