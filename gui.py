@@ -191,7 +191,7 @@ class Ui_MainWindow(object):
                         "}\n"
                         "")
         self.methods_comboBox.setObjectName("methods_comboBox")
-        self.methods_comboBox.addItem("")
+        self.methods_comboBox.addItems(["whittaker_shannon", "Zero-Order Hold", "nearest_neighbor"])
         self.horizontalLayout_2.addWidget(self.methods_comboBox)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
@@ -510,7 +510,6 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.fs_label.setText(_translate("MainWindow", "FS"))
         self.snr_label.setText(_translate("MainWindow", "SNR"))
-        self.methods_comboBox.setItemText(0, _translate("MainWindow", "Method"))
         self.original_signal_label.setText(_translate("MainWindow", "Original Signal"))
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
         self.mixer_button.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))

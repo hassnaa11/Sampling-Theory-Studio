@@ -47,7 +47,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.reconstruct_curve = None
 
-        self.sampling_frequency = 700  # this would be changed by the slider
+        self.sampling_frequency = 700 # this would be changed by the slider
+        self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
 
 
     def open_file(self):
@@ -100,7 +101,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # Sample and reconstruct signal after loading
             self._resample()
-            self._reconstruct()
+            
 
 
     def _resample(self):
@@ -141,8 +142,14 @@ class MainWindow(QtWidgets.QMainWindow):
         # Generate time points for reconstruction
 
         t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        method = self.ui.methods_comboBox.currentText()
 
-        self.reconstructed_signal = reconstructor.reconstruct(t, self.sampling_frequency)
+        if method == "whittaker_shannon":
+            self.reconstructed_signal = reconstructor.reconstruct_whittaker_shannon(t, self.sampling_frequency)
+        elif method == "Zero-Order Hold":
+            self.reconstructed_signal = reconstructor.reconstruct_zero_order_hold(t)
+        elif method == "nearest_neighbor":
+            self.reconstructed_signal=reconstructor.reconstruct_nearest_neighbor(t)
 
 
         # Clear previous reconstructed plot
@@ -160,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.reconstructed_signal.y_vec,
 
-            pen=pg.mkPen(color=(0, 255, 0))  # Green pen
+            pen=pg.mkPen(color=(255,255,255))  # Green pen
         )
 
 
