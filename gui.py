@@ -9,6 +9,9 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QGridLayout
+
+import pyqtgraph as pg
 
 
 class Ui_MainWindow(object):
@@ -42,8 +45,17 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         spacerItem = QtWidgets.QSpacerItem(5, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem)
-        self.original_signal_graph = QtWidgets.QWidget(self.centralwidget)
-        self.original_signal_graph.setEnabled(False)
+
+        ############ original graph #########
+                     
+        self.original_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.original_signal_graph.setMouseEnabled(x=True, y=True) 
+        #self.original_signal_graph.setEnabled(False)
+        #self.original_signal_graph.graph = pg.PlotWidget(self.original_signal_graph)
+        #self.original_signal_graph.graph.setMouseEnabled(x=True, y=True)
+        #Self.original_signal_graph.grid_graph_3 = QGridLayout()
+        #self.original_signal_graph.setLayout(self.original_signal_graph.grid_graph_3)
+        #self.original_signal_graph.grid_graph_3.addWidget(self.original_signal_graph.graph, 0, 0, 1, 1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -54,20 +66,26 @@ class Ui_MainWindow(object):
         self.original_signal_graph.setTabletTracking(True)
         self.original_signal_graph.setAcceptDrops(True)
         self.original_signal_graph.setAutoFillBackground(False)
+        self.original_signal_graph.setBackground((27, 27, 27))
         self.original_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
-"border-radius: 25px;\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
+                "border-radius: 25px;\n"
+                "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                "widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
         self.original_signal_graph.setObjectName("original_signal_graph")
-        self.horizontalLayout_4.addWidget(self.original_signal_graph)
-        self.difference_signal_graph = QtWidgets.QWidget(self.centralwidget)
+        self.horizontalLayout_4.addWidget(self.original_signal_graph, stretch = 1)
+
+        ####### difference plot #######
+
+        # self.difference_signal_graph = QtWidgets.QWidget(self.centralwidget)
+        self.difference_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.difference_signal_graph.setMouseEnabled(x=True, y=True)
         self.difference_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
-"border-radius: 25px;\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"widget-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"")
+                "border-radius: 25px;\n"
+                "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                "widget-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                "")
         self.difference_signal_graph.setObjectName("difference_signal_graph")
-        self.horizontalLayout_4.addWidget(self.difference_signal_graph)
+        self.horizontalLayout_4.addWidget(self.difference_signal_graph, stretch = 1)
         self.gridLayout_4.addLayout(self.horizontalLayout_4, 5, 0, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, -1, 550, -1)
@@ -75,63 +93,63 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.fs_label = QtWidgets.QLabel(self.centralwidget)
         self.fs_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 10pt \"Georgia\";\n"
-"")
+                        "font: italic 10pt \"Georgia\";\n"
+                        "")
         self.fs_label.setObjectName("fs_label")
         self.horizontalLayout_2.addWidget(self.fs_label)
         self.fs_horizontalSlider = QtWidgets.QSlider(self.centralwidget)
         self.fs_horizontalSlider.setStyleSheet("QSlider::groove:horizontal {\n"
-"        height: 8px;\n"
-"        background: #A9DED8;\n"
-"        border-radius: 4px;\n"
-"    }\n"
-"    QSlider::handle:horizontal {\n"
-"        background: #498480;\n"
-"        border: 2px solid #A9DED8;\n"
-"        width: 20px;\n"
-"        height: 20px;\n"
-"        margin: -6px 0;\n"
-"        border-radius: 10px;\n"
-"    }\n"
-"    QSlider::sub-page:horizontal {\n"
-"        background: #498480;\n"
-"        border-radius: 4px;\n"
-"    }\n"
-"    QSlider::add-page:horizontal {\n"
-"        background: #A9DED8;\n"
-"        border-radius: 4px;\n"
-"    }")
+                "        height: 8px;\n"
+                "        background: #A9DED8;\n"
+                "        border-radius: 4px;\n"
+                "    }\n"
+                "    QSlider::handle:horizontal {\n"
+                "        background: #498480;\n"
+                "        border: 2px solid #A9DED8;\n"
+                "        width: 20px;\n"
+                "        height: 20px;\n"
+                "        margin: -6px 0;\n"
+                "        border-radius: 10px;\n"
+                "    }\n"
+                "    QSlider::sub-page:horizontal {\n"
+                "        background: #498480;\n"
+                "        border-radius: 4px;\n"
+                "    }\n"
+                "    QSlider::add-page:horizontal {\n"
+                "        background: #A9DED8;\n"
+                "        border-radius: 4px;\n"
+                "    }")
         self.fs_horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.fs_horizontalSlider.setObjectName("fs_horizontalSlider")
         self.horizontalLayout_2.addWidget(self.fs_horizontalSlider)
         self.snr_label = QtWidgets.QLabel(self.centralwidget)
         self.snr_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 10pt \"Georgia\";\n"
-"")
+                        "font: italic 10pt \"Georgia\";\n"
+                        "")
         self.snr_label.setObjectName("snr_label")
         self.horizontalLayout_2.addWidget(self.snr_label)
         self.snr_horizontalSlider = QtWidgets.QSlider(self.centralwidget)
         self.snr_horizontalSlider.setStyleSheet("QSlider::groove:horizontal {\n"
-"        height: 8px;\n"
-"        background: #A9DED8;\n"
-"        border-radius: 4px;\n"
-"    }\n"
-"    QSlider::handle:horizontal {\n"
-"        background: #498480;\n"
-"        border: 2px solid #A9DED8;\n"
-"        width: 20px;\n"
-"        height: 20px;\n"
-"        margin: -6px 0;\n"
-"        border-radius: 10px;\n"
-"    }\n"
-"    QSlider::sub-page:horizontal {\n"
-"        background: #498480;\n"
-"        border-radius: 4px;\n"
-"    }\n"
-"    QSlider::add-page:horizontal {\n"
-"        background: #A9DED8;\n"
-"        border-radius: 4px;\n"
-"    }")
+                        "        height: 8px;\n"
+                        "        background: #A9DED8;\n"
+                        "        border-radius: 4px;\n"
+                        "    }\n"
+                        "    QSlider::handle:horizontal {\n"
+                        "        background: #498480;\n"
+                        "        border: 2px solid #A9DED8;\n"
+                        "        width: 20px;\n"
+                        "        height: 20px;\n"
+                        "        margin: -6px 0;\n"
+                        "        border-radius: 10px;\n"
+                        "    }\n"
+                        "    QSlider::sub-page:horizontal {\n"
+                        "        background: #498480;\n"
+                        "        border-radius: 4px;\n"
+                        "    }\n"
+                        "    QSlider::add-page:horizontal {\n"
+                        "        background: #A9DED8;\n"
+                        "        border-radius: 4px;\n"
+                        "    }")
         self.snr_horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.snr_horizontalSlider.setObjectName("snr_horizontalSlider")
         self.horizontalLayout_2.addWidget(self.snr_horizontalSlider)
@@ -143,35 +161,35 @@ class Ui_MainWindow(object):
         self.methods_comboBox.setSizePolicy(sizePolicy)
         self.methods_comboBox.setMinimumSize(QtCore.QSize(100, 35))
         self.methods_comboBox.setStyleSheet("QComboBox {\n"
-"    background-color: #1C1C1C;  /* Background color */\n"
-"    color: white;  /* Text color */\n"
-"    border: 1px solid #1C1C1C;\n"
-"    border-radius: 15px;  /* Rounded corners */\n"
-"    padding: 5px;\n"
-"    font-size: 14px;\n"
-"}\n"
-"\n"
-"QComboBox::drop-down {\n"
-"    border: none;\n"
-"    border-radius: 10px;  /* Rounded corners for the arrow box */\n"
-"    background-color: #1C1C1C;\n"
-"    width: 30px;\n"
-"}\n"
-"\n"
-"QComboBox::down-arrow {\n"
-"    width: 15px;\n"
-"    height: 15px;\n"
-"    color: white;  /* Arrow color */\n"
-"}\n"
-"\n"
-"QComboBox QAbstractItemView {\n"
-"    border: 1px solid #1C1C1C;\n"
-"    selection-background-color: #1C1C1C;  /* Selected item background color */\n"
-"    background-color: #1C1C1C;  /* Dropdown background color */\n"
-"    color: white;\n"
-"    border-radius: 10px;\n"
-"}\n"
-"")
+                        "    background-color: #1C1C1C;  /* Background color */\n"
+                        "    color: white;  /* Text color */\n"
+                        "    border: 1px solid #1C1C1C;\n"
+                        "    border-radius: 15px;  /* Rounded corners */\n"
+                        "    padding: 5px;\n"
+                        "    font-size: 14px;\n"
+                        "}\n"
+                        "\n"
+                        "QComboBox::drop-down {\n"
+                        "    border: none;\n"
+                        "    border-radius: 10px;  /* Rounded corners for the arrow box */\n"
+                        "    background-color: #1C1C1C;\n"
+                        "    width: 30px;\n"
+                        "}\n"
+                        "\n"
+                        "QComboBox::down-arrow {\n"
+                        "    width: 15px;\n"
+                        "    height: 15px;\n"
+                        "    color: white;  /* Arrow color */\n"
+                        "}\n"
+                        "\n"
+                        "QComboBox QAbstractItemView {\n"
+                        "    border: 1px solid #1C1C1C;\n"
+                        "    selection-background-color: #1C1C1C;  /* Selected item background color */\n"
+                        "    background-color: #1C1C1C;  /* Dropdown background color */\n"
+                        "    color: white;\n"
+                        "    border-radius: 10px;\n"
+                        "}\n"
+                        "")
         self.methods_comboBox.setObjectName("methods_comboBox")
         self.methods_comboBox.addItem("")
         self.horizontalLayout_2.addWidget(self.methods_comboBox)
@@ -185,8 +203,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.original_signal_label = QtWidgets.QLabel(self.centralwidget)
         self.original_signal_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 11pt \"Georgia\";\n"
-"")
+                        "font: italic 11pt \"Georgia\";\n"
+                        "")
         self.original_signal_label.setTextFormat(QtCore.Qt.PlainText)
         self.original_signal_label.setObjectName("original_signal_label")
         self.horizontalLayout.addWidget(self.original_signal_label)
@@ -194,8 +212,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addItem(spacerItem3)
         self.difference_signal_label = QtWidgets.QLabel(self.centralwidget)
         self.difference_signal_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 11pt \"Georgia\";\n"
-"")
+                        "font: italic 11pt \"Georgia\";\n"
+                        "")
         self.difference_signal_label.setTextFormat(QtCore.Qt.PlainText)
         self.difference_signal_label.setObjectName("difference_signal_label")
         self.horizontalLayout.addWidget(self.difference_signal_label)
@@ -211,9 +229,9 @@ class Ui_MainWindow(object):
         self.mixer_button.setCursor(QtGui.QCursor(QtCore.Qt.OpenHandCursor))
         self.mixer_button.setMouseTracking(True)
         self.mixer_button.setStyleSheet("font: italic 10pt \"Georgia\";\n"
-"background-color: rgb(169, 222, 216);\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"border-radius: 10px;")
+                        "background-color: rgb(169, 222, 216);\n"
+                        "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                        "border-radius: 10px;")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("../Desktop/icons/icons8-zoom-out-64.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.mixer_button.setIcon(icon)
@@ -229,10 +247,10 @@ class Ui_MainWindow(object):
         self.open_file_button.setCursor(QtGui.QCursor(QtCore.Qt.OpenHandCursor))
         self.open_file_button.setMouseTracking(True)
         self.open_file_button.setStyleSheet("font: italic 10pt \"Georgia\";\n"
-"font: 12pt \"Georgia\";\n"
-"background-color: rgb(169, 222, 216);\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"border-radius: 10px;")
+                "font: 12pt \"Georgia\";\n"
+                "background-color: rgb(169, 222, 216);\n"
+                "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                "border-radius: 10px;")
         self.open_file_button.setObjectName("open_file_button")
         self.horizontalLayout.addWidget(self.open_file_button)
         self.gridLayout_4.addLayout(self.horizontalLayout, 2, 0, 1, 1)
@@ -242,42 +260,42 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.mixer_label = QtWidgets.QLabel(self.centralwidget)
         self.mixer_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 11pt \"Georgia\";\n"
-"")
+                "font: italic 11pt \"Georgia\";\n"
+                "")
         self.mixer_label.setObjectName("mixer_label")
         self.horizontalLayout_8.addWidget(self.mixer_label)
         spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem5)
         self.tests_comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.tests_comboBox.setStyleSheet("QComboBox {\n"
-"    background-color: #1C1C1C;  /* Background color */\n"
-"    color: white;  /* Text color */\n"
-"    border: 1px solid #1C1C1C;\n"
-"    border-radius: 15px;  /* Rounded corners */\n"
-"    padding: 5px;\n"
-"    font-size: 14px;\n"
-"}\n"
-"\n"
-"QComboBox::drop-down {\n"
-"    border: none;\n"
-"    border-radius: 10px;  /* Rounded corners for the arrow box */\n"
-"    background-color: #1C1C1C;\n"
-"    width: 30px;\n"
-"}\n"
-"\n"
-"QComboBox::down-arrow {\n"
-"    width: 15px;\n"
-"    height: 15px;\n"
-"    color: white;  /* Arrow color */\n"
-"}\n"
-"\n"
-"QComboBox QAbstractItemView {\n"
-"    border: 1px solid #1C1C1C;\n"
-"    selection-background-color: #1C1C1C;  /* Selected item background color */\n"
-"    background-color: #1C1C1C;  /* Dropdown background color */\n"
-"    color: white;\n"
-"    border-radius: 10px;\n"
-"}")
+                "    background-color: #1C1C1C;  /* Background color */\n"
+                "    color: white;  /* Text color */\n"
+                "    border: 1px solid #1C1C1C;\n"
+                "    border-radius: 15px;  /* Rounded corners */\n"
+                "    padding: 5px;\n"
+                "    font-size: 14px;\n"
+                "}\n"
+                "\n"
+                "QComboBox::drop-down {\n"
+                "    border: none;\n"
+                "    border-radius: 10px;  /* Rounded corners for the arrow box */\n"
+                "    background-color: #1C1C1C;\n"
+                "    width: 30px;\n"
+                "}\n"
+                "\n"
+                "QComboBox::down-arrow {\n"
+                "    width: 15px;\n"
+                "    height: 15px;\n"
+                "    color: white;  /* Arrow color */\n"
+                "}\n"
+                "\n"
+                "QComboBox QAbstractItemView {\n"
+                "    border: 1px solid #1C1C1C;\n"
+                "    selection-background-color: #1C1C1C;  /* Selected item background color */\n"
+                "    background-color: #1C1C1C;  /* Dropdown background color */\n"
+                "    color: white;\n"
+                "    border-radius: 10px;\n"
+                "}")
         self.tests_comboBox.setObjectName("tests_comboBox")
         self.tests_comboBox.addItem("")
         self.horizontalLayout_8.addWidget(self.tests_comboBox)
@@ -292,25 +310,25 @@ class Ui_MainWindow(object):
         self.tableWidget.setSizePolicy(sizePolicy)
         self.tableWidget.setMinimumSize(QtCore.QSize(300, 0))
         self.tableWidget.setStyleSheet("QTabelWidget {\n"
-"    background-color: rgb(0, 0, 0);\n"
-"    background-color : back;\n"
-"    color: rgb(255, 255, 255);\n"
-"    border : none;\n"
-"    font-family: \"Arial\";\n"
-"    font-size : 14px;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item {\n"
-"borde-bottom: 1px solid gray;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item : selected {\n"
-"background-color : darckgray;\n"
-"}\n"
-"\n"
-"QHeaderView :: section{\n"
-"border : none\n"
-"}")
+                "    background-color: rgb(0, 0, 0);\n"
+                "    background-color : back;\n"
+                "    color: rgb(255, 255, 255);\n"
+                "    border : none;\n"
+                "    font-family: \"Arial\";\n"
+                "    font-size : 14px;\n"
+                "}\n"
+                "\n"
+                "QTabelWidget :: item {\n"
+                "borde-bottom: 1px solid gray;\n"
+                "}\n"
+                "\n"
+                "QTabelWidget :: item : selected {\n"
+                "background-color : darckgray;\n"
+                "}\n"
+                "\n"
+                "QHeaderView :: section{\n"
+                "border : none\n"
+                "}")
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setRowCount(0)
@@ -331,15 +349,18 @@ class Ui_MainWindow(object):
         self.mixed_signal_label.setSizePolicy(sizePolicy)
         self.mixed_signal_label.setMinimumSize(QtCore.QSize(150, 30))
         self.mixed_signal_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 10pt \"Georgia\";\n"
-"")
+                "font: italic 10pt \"Georgia\";\n"
+                "")
         self.mixed_signal_label.setObjectName("mixed_signal_label")
         self.verticalLayout_2.addWidget(self.mixed_signal_label)
-        self.mixed_signal_graph = QtWidgets.QWidget(self.centralwidget)
+        
+        self.mixed_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.mixed_signal_graph.setMouseEnabled(x=True, y=True)
+        # self.mixed_signal_graph = QtWidgets.QWidget(self.centralwidget)
         self.mixed_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
-"border-radius: 25px;\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
+                "border-radius: 25px;\n"
+                "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                "widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
         self.mixed_signal_graph.setObjectName("mixed_signal_graph")
         self.verticalLayout_2.addWidget(self.mixed_signal_graph)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
@@ -354,10 +375,10 @@ class Ui_MainWindow(object):
         self.apply_button_2.setSizePolicy(sizePolicy)
         self.apply_button_2.setMinimumSize(QtCore.QSize(80, 30))
         self.apply_button_2.setStyleSheet("font: italic 10pt \"Georgia\";\n"
-"font: 12pt \"Georgia\";\n"
-"background-color: rgb(169, 222, 216);\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"border-radius: 10px;")
+                        "font: 12pt \"Georgia\";\n"
+                        "background-color: rgb(169, 222, 216);\n"
+                        "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                        "border-radius: 10px;")
         self.apply_button_2.setObjectName("apply_button_2")
         self.horizontalLayout_5.addWidget(self.apply_button_2)
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -375,8 +396,8 @@ class Ui_MainWindow(object):
         self.reconstructed_signal_label.setSizePolicy(sizePolicy)
         self.reconstructed_signal_label.setMinimumSize(QtCore.QSize(0, 30))
         self.reconstructed_signal_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 10pt \"Georgia\";\n"
-"")
+                "font: italic 10pt \"Georgia\";\n"
+                "")
         self.reconstructed_signal_label.setObjectName("reconstructed_signal_label")
         self.horizontalLayout_7.addWidget(self.reconstructed_signal_label)
         spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -389,8 +410,8 @@ class Ui_MainWindow(object):
         self.frequancy_domain_label.setSizePolicy(sizePolicy)
         self.frequancy_domain_label.setMinimumSize(QtCore.QSize(0, 30))
         self.frequancy_domain_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: italic 10pt \"Georgia\";\n"
-"")
+                "font: italic 10pt \"Georgia\";\n"
+                "")
         self.frequancy_domain_label.setObjectName("frequancy_domain_label")
         self.horizontalLayout_7.addWidget(self.frequancy_domain_label)
         spacerItem10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -414,7 +435,7 @@ class Ui_MainWindow(object):
         font.setWeight(9)
         self.title_label.setFont(font)
         self.title_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: 75 20pt \"Microsoft PhagsPa\";")
+                "font: 75 20pt \"Microsoft PhagsPa\";")
         self.title_label.setTextFormat(QtCore.Qt.PlainText)
         self.title_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.title_label.setObjectName("title_label")
@@ -442,8 +463,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         spacerItem13 = QtWidgets.QSpacerItem(5, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem13)
-        self.reconstructed_signal_graph = QtWidgets.QWidget(self.centralwidget)
-        self.reconstructed_signal_graph.setEnabled(False)
+
+        ##############       reconstruction graph      #############
+
+        self.reconstructed_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.reconstructed_signal_graph.setMouseEnabled(x=True, y=True)
+        # self.reconstructed_signal_graph = QtWidgets.QWidget(self.centralwidget)
+        # self.reconstructed_signal_graph.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -455,20 +481,26 @@ class Ui_MainWindow(object):
         self.reconstructed_signal_graph.setAcceptDrops(True)
         self.reconstructed_signal_graph.setAutoFillBackground(False)
         self.reconstructed_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
-"border-radius: 25px;\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
+                "border-radius: 25px;\n"
+                "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                "widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
         self.reconstructed_signal_graph.setObjectName("reconstructed_signal_graph")
-        self.horizontalLayout_6.addWidget(self.reconstructed_signal_graph)
-        self.frequancy_domain_graph = QtWidgets.QWidget(self.centralwidget)
+        self.horizontalLayout_6.addWidget(self.reconstructed_signal_graph, stretch = 1)
+
+        ######### frequency graph ##########
+
+        # self.frequancy_domain_graph = QtWidgets.QWidget(self.centralwidget)
+        self.frequancy_domain_graph = pg.PlotWidget(self.centralwidget)
+        self.frequancy_domain_graph.setMouseEnabled(x=True, y=True)
         self.frequancy_domain_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
-"border-radius: 25px;\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
+                "border-radius: 25px;\n"
+                "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+                "widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
         self.frequancy_domain_graph.setObjectName("frequancy_domain_graph")
-        self.horizontalLayout_6.addWidget(self.frequancy_domain_graph)
+        self.horizontalLayout_6.addWidget(self.frequancy_domain_graph, stretch = 1)
         self.gridLayout_4.addLayout(self.horizontalLayout_6, 9, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
+
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
