@@ -37,26 +37,27 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.title_label.sizePolicy().hasHeightForWidth())
         self.title_label.setSizePolicy(sizePolicy)
+        self.title_label.setMaximumSize(QtCore.QSize(16777215, 60))
         font = QtGui.QFont()
         font.setFamily("Microsoft PhagsPa")
         font.setPointSize(20)
         font.setBold(False)
         font.setItalic(False)
-        font.setWeight(9)
+        font.setWeight(50)
         self.title_label.setFont(font)
         self.title_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: 75 20pt \"Microsoft PhagsPa\";")
+"font: 20pt \"Microsoft PhagsPa\";")
         self.title_label.setTextFormat(QtCore.Qt.PlainText)
         self.title_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.title_label.setObjectName("title_label")
         self.verticalLayout_2.addWidget(self.title_label)
         self.top_task_bar_widget = QtWidgets.QWidget(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.top_task_bar_widget.sizePolicy().hasHeightForWidth())
@@ -81,7 +82,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
         self.horizontalLayout_13.setContentsMargins(15, -1, 15, -1)
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
-        spacerItem = QtWidgets.QSpacerItem(800, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(1200, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_13.addItem(spacerItem)
         self.horizontalLayout_10.addLayout(self.horizontalLayout_13)
         self.open_file_button = QtWidgets.QPushButton(self.top_task_bar_widget)
@@ -119,7 +120,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.addWidget(self.mixer_button)
         self.verticalLayout_2.addWidget(self.top_task_bar_widget, 0, QtCore.Qt.AlignLeft)
         self.original_signal_graph = QtWidgets.QWidget(self.centralwidget)
-        self.original_signal_graph.setEnabled(False)
+        self.original_signal_graph.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -166,7 +167,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.fs_label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.fs_label.sizePolicy().hasHeightForWidth())
@@ -219,28 +220,71 @@ class Ui_MainWindow(object):
         self.snr_horizontalSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
         self.snr_horizontalSlider.setObjectName("snr_horizontalSlider")
         self.horizontalLayout_4.addWidget(self.snr_horizontalSlider)
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.fs_value_label = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setMaximumSize(QtCore.QSize(150, 16777215))
-        self.label.setStyleSheet("  background-color: #1C1C1C;  /* Background color */\n"
+        sizePolicy.setHeightForWidth(self.fs_value_label.sizePolicy().hasHeightForWidth())
+        self.fs_value_label.setSizePolicy(sizePolicy)
+        self.fs_value_label.setMaximumSize(QtCore.QSize(140, 16777215))
+        self.fs_value_label.setStyleSheet("  background-color: #1C1C1C;  /* Background color */\n"
 "    color: white;  /* Text color */\n"
 "    border: 1px solid #1C1C1C;\n"
 "    border-radius: 15px;  /* Rounded corners */\n"
 "    padding: 5px;\n"
 "    font: italic 10pt \"Georgia\";")
-        self.label.setObjectName("label")
-        self.horizontalLayout_4.addWidget(self.label)
+        self.fs_value_label.setObjectName("fs_value_label")
+        self.horizontalLayout_4.addWidget(self.fs_value_label)
+        self.methods_comboBox = QtWidgets.QComboBox(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.methods_comboBox.sizePolicy().hasHeightForWidth())
+        self.methods_comboBox.setSizePolicy(sizePolicy)
+        self.methods_comboBox.setMinimumSize(QtCore.QSize(100, 35))
+        self.methods_comboBox.setStyleSheet("QComboBox {\n"
+"    background-color: #1C1C1C;  /* Background color */\n"
+"    color: white;  /* Text color */\n"
+"    border: 1px solid #1C1C1C;\n"
+"    border-radius: 15px;  /* Rounded corners */\n"
+"    padding: 5px;\n"
+"    font: italic 10pt \"Georgia\";\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    border: none;\n"
+"    border-radius: 10px;  /* Rounded corners for the arrow box */\n"
+"    background-color: #1C1C1C;\n"
+"    width: 30px;\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"    width: 15px;\n"
+"    height: 15px;\n"
+"    color: white;  /* Arrow color */\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    border: 1px solid #1C1C1C;\n"
+"    selection-background-color: #1C1C1C;  /* Selected item background color */\n"
+"    background-color: #1C1C1C;  /* Dropdown background color */\n"
+"    color: white;\n"
+"    border-radius: 10px;\n"
+"}\n"
+"")
+        self.methods_comboBox.setObjectName("methods_comboBox")
+        self.methods_comboBox.addItem("")
+        self.methods_comboBox.addItem("")
+        self.methods_comboBox.addItem("")
+        self.methods_comboBox.addItem("")
+        self.horizontalLayout_4.addWidget(self.methods_comboBox)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem1 = QtWidgets.QSpacerItem(200, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(350, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.horizontalLayout_4.addLayout(self.horizontalLayout_3)
         self.snr_label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.snr_label.sizePolicy().hasHeightForWidth())
@@ -293,64 +337,21 @@ class Ui_MainWindow(object):
         self.fs_horizontalSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
         self.fs_horizontalSlider.setObjectName("fs_horizontalSlider")
         self.horizontalLayout_4.addWidget(self.fs_horizontalSlider)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.snr_value_label = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
-        self.label_2.setSizePolicy(sizePolicy)
-        self.label_2.setMaximumSize(QtCore.QSize(150, 16777215))
-        self.label_2.setStyleSheet("  background-color: #1C1C1C;  /* Background color */\n"
+        sizePolicy.setHeightForWidth(self.snr_value_label.sizePolicy().hasHeightForWidth())
+        self.snr_value_label.setSizePolicy(sizePolicy)
+        self.snr_value_label.setMaximumSize(QtCore.QSize(140, 16777215))
+        self.snr_value_label.setStyleSheet("  background-color: #1C1C1C;  /* Background color */\n"
 "    color: white;  /* Text color */\n"
 "    border: 1px solid #1C1C1C;\n"
 "    border-radius: 15px;  /* Rounded corners */\n"
 "    padding: 5px;\n"
 "    font: italic 10pt \"Georgia\";")
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout_4.addWidget(self.label_2)
-        self.methods_comboBox = QtWidgets.QComboBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.methods_comboBox.sizePolicy().hasHeightForWidth())
-        self.methods_comboBox.setSizePolicy(sizePolicy)
-        self.methods_comboBox.setMinimumSize(QtCore.QSize(100, 35))
-        self.methods_comboBox.setStyleSheet("QComboBox {\n"
-"    background-color: #1C1C1C;  /* Background color */\n"
-"    color: white;  /* Text color */\n"
-"    border: 1px solid #1C1C1C;\n"
-"    border-radius: 15px;  /* Rounded corners */\n"
-"    padding: 5px;\n"
-"    font: italic 10pt \"Georgia\";\n"
-"}\n"
-"\n"
-"QComboBox::drop-down {\n"
-"    border: none;\n"
-"    border-radius: 10px;  /* Rounded corners for the arrow box */\n"
-"    background-color: #1C1C1C;\n"
-"    width: 30px;\n"
-"}\n"
-"\n"
-"QComboBox::down-arrow {\n"
-"    width: 15px;\n"
-"    height: 15px;\n"
-"    color: white;  /* Arrow color */\n"
-"}\n"
-"\n"
-"QComboBox QAbstractItemView {\n"
-"    border: 1px solid #1C1C1C;\n"
-"    selection-background-color: #1C1C1C;  /* Selected item background color */\n"
-"    background-color: #1C1C1C;  /* Dropdown background color */\n"
-"    color: white;\n"
-"    border-radius: 10px;\n"
-"}\n"
-"")
-        self.methods_comboBox.setObjectName("methods_comboBox")
-        self.methods_comboBox.addItem("")
-        self.methods_comboBox.addItem("")
-        self.methods_comboBox.addItem("")
-        self.methods_comboBox.addItem("")
-        self.horizontalLayout_4.addWidget(self.methods_comboBox)
+        self.snr_value_label.setObjectName("snr_value_label")
+        self.horizontalLayout_4.addWidget(self.snr_value_label)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
         self.reconstructed_signal_label = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -664,13 +665,13 @@ class Ui_MainWindow(object):
         self.actual_radioButton.setText(_translate("MainWindow", "Actual"))
         self.normalized_radioButton.setText(_translate("MainWindow", "Normalized"))
         self.fs_label.setText(_translate("MainWindow", "FS"))
-        self.label.setText(_translate("MainWindow", "FS: "))
-        self.snr_label.setText(_translate("MainWindow", "SNR"))
-        self.label_2.setText(_translate("MainWindow", "SNR: "))
+        self.fs_value_label.setText(_translate("MainWindow", "FS: "))
         self.methods_comboBox.setItemText(0, _translate("MainWindow", "Method"))
         self.methods_comboBox.setItemText(1, _translate("MainWindow", "Method1"))
         self.methods_comboBox.setItemText(2, _translate("MainWindow", "Method2"))
         self.methods_comboBox.setItemText(3, _translate("MainWindow", "Method3"))
+        self.snr_label.setText(_translate("MainWindow", "SNR"))
+        self.snr_value_label.setText(_translate("MainWindow", "SNR: "))
         self.reconstructed_signal_label.setText(_translate("MainWindow", "Reconstructed Signal"))
         self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Error Difference"))
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
