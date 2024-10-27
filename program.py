@@ -35,7 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         
         self.is_mixer_running = False
-        self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
+        self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph, self.ui.tests_comboBox)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
 
@@ -96,6 +96,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def plot_composed_signal(self):
         self.mixer.stop()
+        
+        self.ui.original_signal_graph.plotItem.clear()  
+        self.ui.reconstructed_signal_graph.plotItem.clear()
                 
         if int(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
             self.sampling_frequency = 2 * int(self.mixer.max_frequency)
@@ -147,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow):
         reconstructor = Reconstructor(self.sampled_signal)
         
         # Generate time points for reconstruction
-        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], self.sampling_frequency)
         method = self.ui.methods_comboBox.currentText()
 
         if method == "whittaker_shannon":

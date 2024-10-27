@@ -4,10 +4,11 @@ from PyQt5 import  QtGui, QtWidgets
 class Mixer(QThread):
     update_data_signal = pyqtSignal(dict)
 
-    def __init__(self, signals_table, preview_graph):
+    def __init__(self, signals_table, preview_graph, tests_comboBox):
         super().__init__()
         self.signals_table = signals_table
         self.preview_graph = preview_graph
+        self.tests_comboBox = tests_comboBox
         self.signals_table.insertRow(self.signals_table.rowCount())
         
         self.remove_icon = QtGui.QIcon()
@@ -27,7 +28,9 @@ class Mixer(QThread):
         signals_data = {}
         row_count = self.signals_table.rowCount()
         rows = 0
+        self.max_frequency = 0
         for row in range(row_count):
+            # print(row)
             if self.signals_table.item(row, 0) and self.signals_table.item(row, 1) and self.signals_table.item(row, 2):
                 signals_data[row] = {
                     'Frequency': self.signals_table.item(row, 0).text(),
@@ -39,11 +42,12 @@ class Mixer(QThread):
                 if float(self.signals_table.item(row, 0).text()) > float(self.max_frequency):
                     self.max_frequency = self.signals_table.item(row, 0).text()
                     print("max frequency: ", self.max_frequency)
-        
+                
         if not(self.signals_data == signals_data):
+            print("will emit")
             self.signals_data = signals_data
-            self.update_data_signal.emit(signals_data)            
-                    
+            self.update_data_signal.emit(signals_data) 
+
                             
         # check if all rows have data then add new row and emit data 
         if rows == row_count: 
@@ -86,4 +90,4 @@ class Mixer(QThread):
     
     def stop(self):
         print("stop")
-        self.running = False         
+        self.running = False       
