@@ -358,7 +358,10 @@ class Ui_MainWindow(object):
                 "")
         self.mixed_signal_label.setObjectName("mixed_signal_label")
         self.verticalLayout_2.addWidget(self.mixed_signal_label)
-        self.mixed_signal_graph = QtWidgets.QWidget(self.centralwidget)
+        
+        self.mixed_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.mixed_signal_graph.setMouseEnabled(x=True, y=True)
+        # self.mixed_signal_graph = QtWidgets.QWidget(self.centralwidget)
         self.mixed_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
                 "border-radius: 25px;\n"
                 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
