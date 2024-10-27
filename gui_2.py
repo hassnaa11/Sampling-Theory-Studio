@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import pyqtgraph as pg
 
 
 class Ui_MainWindow(object):
@@ -119,12 +120,16 @@ class Ui_MainWindow(object):
         self.mixer_button.setObjectName("mixer_button")
         self.horizontalLayout_10.addWidget(self.mixer_button)
         self.verticalLayout_2.addWidget(self.top_task_bar_widget, 0, QtCore.Qt.AlignLeft)
-        self.original_signal_graph = QtWidgets.QWidget(self.centralwidget)
-        self.original_signal_graph.setEnabled(True)
+        
+        ########### original graph ###########
+
+        self.original_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.original_signal_graph.setMouseEnabled(x=True, y=True) 
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.original_signal_graph.sizePolicy().hasHeightForWidth())
+        
         self.original_signal_graph.setSizePolicy(sizePolicy)
         self.original_signal_graph.setMinimumSize(QtCore.QSize(0, 110))
         self.original_signal_graph.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -138,6 +143,8 @@ class Ui_MainWindow(object):
 "widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
         self.original_signal_graph.setObjectName("original_signal_graph")
         self.verticalLayout_2.addWidget(self.original_signal_graph)
+
+
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.actual_radioButton = QtWidgets.QRadioButton(self.centralwidget)
@@ -353,7 +360,10 @@ class Ui_MainWindow(object):
         self.snr_value_label.setObjectName("snr_value_label")
         self.horizontalLayout_4.addWidget(self.snr_value_label)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
+        
+        ########### reconstructed graph ###########
         self.reconstructed_signal_label = QtWidgets.QLabel(self.centralwidget)
+       
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -363,10 +373,16 @@ class Ui_MainWindow(object):
         self.reconstructed_signal_label.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
+         
         self.reconstructed_signal_label.setObjectName("reconstructed_signal_label")
         self.verticalLayout_2.addWidget(self.reconstructed_signal_label)
-        self.reconstructed_signal_graph = QtWidgets.QWidget(self.centralwidget)
-        self.reconstructed_signal_graph.setEnabled(False)
+        
+        
+        self.reconstructed_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.reconstructed_signal_graph.setMouseEnabled(x=True, y=True)
+        
+        # # self.reconstructed_signal_graph = QtWidgets.QWidget(self.centralwidget)
+        # self.reconstructed_signal_graph.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -386,6 +402,8 @@ class Ui_MainWindow(object):
 "padding-left: 5px;")
         self.reconstructed_signal_graph.setObjectName("reconstructed_signal_graph")
         self.verticalLayout_2.addWidget(self.reconstructed_signal_graph)
+
+
         self.error_frequency_toggle_button = QtWidgets.QRadioButton(self.centralwidget)
         self.error_frequency_toggle_button.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
@@ -427,7 +445,11 @@ class Ui_MainWindow(object):
         self.difference_signal_label.setTextFormat(QtCore.Qt.PlainText)
         self.difference_signal_label.setObjectName("difference_signal_label")
         self.verticalLayout_7.addWidget(self.difference_signal_label)
-        self.difference_signal_graph = QtWidgets.QWidget(self.page_4)
+        
+        ######## difference signal graph ########
+
+        self.difference_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.difference_signal_graph.setMouseEnabled(x=True, y=True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -442,6 +464,8 @@ class Ui_MainWindow(object):
         self.difference_signal_graph.setObjectName("difference_signal_graph")
         self.verticalLayout_7.addWidget(self.difference_signal_graph)
         self.stackedWidget.addWidget(self.page_4)
+
+
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.page_3)
@@ -458,7 +482,11 @@ class Ui_MainWindow(object):
 "")
         self.frequancy_domain_label.setObjectName("frequancy_domain_label")
         self.verticalLayout_5.addWidget(self.frequancy_domain_label)
-        self.frequancy_domain_graph = QtWidgets.QWidget(self.page_3)
+
+        ######## frequency domain graph ########
+
+        self.frequancy_domain_graph = pg.PlotWidget(self.centralwidget)
+        self.frequancy_domain_graph.setMouseEnabled(x=True, y=True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -473,9 +501,14 @@ class Ui_MainWindow(object):
         self.frequancy_domain_graph.setObjectName("frequancy_domain_graph")
         self.verticalLayout_5.addWidget(self.frequancy_domain_graph)
         self.stackedWidget.addWidget(self.page_3)
+
+
         self.verticalLayout_2.addWidget(self.stackedWidget)
         self.verticalLayout.addLayout(self.verticalLayout_2)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
+
+        ########### side bar ###########
+
         self.side_bar_widget = QtWidgets.QWidget(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -594,7 +627,8 @@ class Ui_MainWindow(object):
 "")
         self.mixed_signal_label.setObjectName("mixed_signal_label")
         self.verticalLayout_6.addWidget(self.mixed_signal_label)
-        self.mixed_signal_graph = QtWidgets.QWidget(self.side_bar_widget)
+        self.mixed_signal_graph = pg.PlotWidget(self.centralwidget)
+        self.mixed_signal_graph.setMouseEnabled(x=True, y=True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
