@@ -1,6 +1,7 @@
 from models.signal import signal, signalType
 from scipy.interpolate import CubicSpline
 import numpy as np
+from scipy.interpolate import RBFInterpolator
 
 class Reconstructor:
     def __init__(self, sampled_signal: signal):
@@ -33,23 +34,13 @@ class Reconstructor:
         return signal(t, y_interp, signalType.CONTINUOUS)
     
     def reconstruct_zero_order_hold(self, t: np.ndarray):
-        x_vec = self.sampled_signal.x_vec  # Discrete time points of sampled signal
-        y_vec = self.sampled_signal.y_vec  # Discrete sample values
-
-        # Initialize array for interpolated values
+        x_vec = self.sampled_signal.x_vec  
+        y_vec = self.sampled_signal.y_vec  
         y_interp = np.zeros_like(t)
-
-        # Loop over each interval between samples and hold the previous sample's value
         for i in range(len(x_vec) - 1):
-            # Find indices in `t` that fall within the current interval
             indices = (t >= x_vec[i]) & (t < x_vec[i + 1])
-            # Assign the value of `y_vec[i]` to all points in this interval
             y_interp[indices] = y_vec[i]
-
-        # For the final interval, hold the last sample's value
         y_interp[t >= x_vec[-1]] = y_vec[-1]
-
-        # Return the reconstructed signal as a continuous-type signal
         return signal(np.array(t), np.array(y_interp), signalType.CONTINUOUS)
     
     def reconstruct_nearest_neighbor(self, t: np.ndarray):
@@ -58,9 +49,14 @@ class Reconstructor:
         y_vec = self.sampled_signal.y_vec
         y_interp = np.zeros_like(t)
         for i in range(len(t)):
-            # Find the index of the nearest sampled value
             idx = np.argmin(np.abs(x_vec - t[i]))
-            y_interp[i] = y_vec[idx]  # Assign the nearest sample value
-
+            y_interp[i] = y_vec[idx]
         return signal(np.array(t), np.array(y_interp), signalType.CONTINUOUS)
+    def reconstruct_RBF(self, t: np.ndarray, degree=3):
+        x_vec = self.sampled_signal.x_vec.reshape(-1, 1)  # Reshape for RBF
+        y_vec = self.sampled_signal.y_vec
 
+        rbf_interpolator = RBFInterpolator(x_vec, y_vec)
+        y_interp = rbf_interpolator(t.reshape(-1, 1))  # Reshape t for RBF
+
+        return signal(np.array(t), np.array(y_interp).flatten(), signalType.CONTINUOUS)

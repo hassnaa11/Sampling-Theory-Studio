@@ -23,7 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reconstructed_signal = None
         self.sampling_curve = None
         self.reconstruct_curve = None
-        self.sampling_frequency = 700 # this would be changed by the slider
+        self.sampling_frequency = 300 # this would be changed by the slider
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
 
 
@@ -90,14 +90,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if method == "whittaker_shannon":
                     self.reconstructed_signal = reconstructor.reconstruct_shannon(t, self.sampling_frequency)
-        elif method == "Zero-Order Hold":
-                    self.reconstructed_signal = reconstructor.reconstruct_zero_order_hold(t)
+        elif method == "RBF interpolation":
+                    self.reconstructed_signal = reconstructor. reconstruct_RBF(t)
         elif method == "nearest_neighbor":
                     self.reconstructed_signal=reconstructor.reconstruct_nearest_neighbor(t)
         elif method == "Linear":
             self.reconstructed_signal = reconstructor.reconstruct_linear(t)
         elif method == "Cubic Spline":
             self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
+        elif method=="Zero-Order Hold":
+            self.reconstructed_signal = reconstructor. reconstruct_zero_order_hold(t)
+
 
 
 

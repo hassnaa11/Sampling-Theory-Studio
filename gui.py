@@ -196,6 +196,7 @@ class Ui_MainWindow(object):
         self.methods_comboBox.addItem("Cubic Spline")
         self.methods_comboBox.addItem("nearest_neighbor")
         self.methods_comboBox.addItem("Zero-Order Hold")
+        self.methods_comboBox.addItem("RBF interpolation")
         self.horizontalLayout_2.addWidget(self.methods_comboBox)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
