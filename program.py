@@ -23,6 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reconstructed_signal = None
         self.sampling_curve = None
         self.reconstruct_curve = None
+        self.difference_curve = None  # To plot the difference signal curve
         self.sampling_frequency = 700 # this would be changed by the slider
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
 
@@ -112,6 +113,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
             pen=pg.mkPen(color=(255, 255, 255))  # Green pen
         )
+
+        # Plot the difference signal
+        self._calculate_difference()
+
+    def _calculate_difference(self):
+        if not self.signal or not self.reconstructed_signal:
+            return
+        
+        # Define x_diff to be the same as the original signal's x-values
+        x_diff = self.signal.x_vec
+        
+        # Interpolate the reconstructed signal to match the original signal's x values
+        y_interp = np.interp(x_diff, self.reconstructed_signal.x_vec, self.reconstructed_signal.y_vec)
+        
+        # Calculate the difference
+        y_diff = self.signal.y_vec - y_interp
+
+        # Clear any previous difference plot
+        self.ui.difference_signal_graph.plotItem.clear()
+
+        # Plot the difference signal
+        self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
