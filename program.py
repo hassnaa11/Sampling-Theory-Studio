@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5 import QtCore
 from gui import Ui_MainWindow
+from mixer import Mixer
+
 from PyQt5.QtWidgets import QFileDialog
 import pyqtgraph as pg
 import sys
@@ -31,6 +33,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.max_frequency = 1150
 
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
+        
+        self.is_mixer_running = False
+        self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
+        self.ui.mixer_button.clicked.connect(self.mixSignals)
+        self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
 
 
     def open_file(self):
@@ -46,7 +53,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if 'x' in df.columns and 'y' in df.columns:
             x = np.array(df['x'])
             y = np.array(df['y'])
-        
+            
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
 
@@ -85,6 +92,32 @@ class MainWindow(QtWidgets.QMainWindow):
         print(f"Current sampling frequency: {self.sampling_frequency}")
         self._resample()
         self._reconstruct()
+        
+    def plot_composed_signal(self):
+        self.mixer.stop()
+        
+        self.sampling_frequency = 10
+        
+        x = self.mixer.composed_x_data
+        y = self.mixer.composed_y_data
+        
+        # Initialize the signal
+        self.signal = signal(x, y, signalType.CONTINUOUS)
+
+        # Clear any previous plots
+        self.ui.original_signal_graph.plotItem.clear() 
+        self.ui.reconstructed_signal_graph.plotItem.clear()
+
+        # Plot the original signal
+        self.ui.original_signal_graph.plot(x, y, pen='w')
+
+        # Set the range for both plots to match the signal size
+        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
+        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
+
+        # Sample and reconstruct signal after loading
+        self._resample()        
+            
 
     def _resample(self):
         sampler = Sampler(self.signal)
@@ -133,6 +166,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reconstructed_signal.y_vec,
             pen=pg.mkPen(color=(255, 255, 255))  # Green pen
         )
+
+
+    def mixSignals(self):
+        self.is_mixer_running = not self.is_mixer_running 
+        if self.is_mixer_running and self.mixer.running == False:
+            self.mixer.start()
+        else:
+            self.mixer.stop()  
+            
+    # to stop mixer thread before exit the program        
+    def closeEvent(self, event): 
+        self.mixer.stop() 
+        event.accept()         
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
