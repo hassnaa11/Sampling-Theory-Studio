@@ -96,28 +96,32 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def plot_composed_signal(self):
         self.mixer.stop()
+                
+        if int(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
+            self.sampling_frequency = 2 * int(self.mixer.max_frequency)
+            
+            x = self.mixer.composed_x_data
+            y = self.mixer.composed_y_data    
         
-        self.sampling_frequency = 10
-        
-        x = self.mixer.composed_x_data
-        y = self.mixer.composed_y_data
-        
-        # Initialize the signal
-        self.signal = signal(x, y, signalType.CONTINUOUS)
+            # Initialize the signal
+            self.signal = signal(x, y, signalType.CONTINUOUS)
 
-        # Clear any previous plots
-        self.ui.original_signal_graph.plotItem.clear() 
-        self.ui.reconstructed_signal_graph.plotItem.clear()
+            # Clear any previous plots
+            self.ui.original_signal_graph.plotItem.clear() 
+            self.ui.reconstructed_signal_graph.plotItem.clear()
 
-        # Plot the original signal
-        self.ui.original_signal_graph.plot(x, y, pen='w')
+            # Plot the original signal
+            self.ui.original_signal_graph.plot(x, y, pen='w')
 
-        # Set the range for both plots to match the signal size
-        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
-        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
+            # Set the range for both plots to match the signal size
+            self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
+            self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
 
-        # Sample and reconstruct signal after loading
-        self._resample()        
+            # Sample and reconstruct signal after loading
+            self._resample() 
+        else:
+            self.ui.original_signal_graph.plotItem.clear()  
+            self.ui.reconstructed_signal_graph.plotItem.clear()         
             
 
     def _resample(self):
