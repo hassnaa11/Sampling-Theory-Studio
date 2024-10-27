@@ -70,6 +70,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # Sample and reconstruct signal after loading
             self._resample()
+            self._reconstruct()
             
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
@@ -92,7 +93,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(f"Current sampling frequency: {self.sampling_frequency}")
         self._resample()
         self._reconstruct()
-        
+
     def plot_composed_signal(self):
         self.mixer.stop()
         
