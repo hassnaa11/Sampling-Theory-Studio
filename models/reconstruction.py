@@ -8,7 +8,7 @@ class Reconstructor:
         self.sampled_signal = sampled_signal
 
     def reconstruct_shannon(self, t: np.ndarray, sampling_frequency):
-        print("t = ", t)
+        # print("t = ", t)
         print("sampling freq = ", sampling_frequency)
         x_vec = self.sampled_signal.x_vec
         y_vec = self.sampled_signal.y_vec
