@@ -21,6 +21,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.open_file_button.clicked.connect(self.open_file)
         self.ui.actual_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
+        self.ui.snr_horizontalSlider.valueChanged.connect(self.add_noise)
+        self.ui.snr_horizontalSlider.setRange(1,10)
         
         # Set initial properties
         self.signal = None
@@ -155,18 +157,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if method == "whittaker_shannon":
                     self.reconstructed_signal = reconstructor.reconstruct_shannon(t, self.sampling_frequency)
-        elif method == "RBF interpolation":
-                    self.reconstructed_signal = reconstructor. reconstruct_RBF(t)
+        elif method == "Zero-Order Hold":
+                    self.reconstructed_signal = reconstructor.reconstruct_zero_order_hold(t)
         elif method == "nearest_neighbor":
                     self.reconstructed_signal=reconstructor.reconstruct_nearest_neighbor(t)
         elif method == "Linear":
             self.reconstructed_signal = reconstructor.reconstruct_linear(t)
         elif method == "Cubic Spline":
             self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
-        elif method=="Zero-Order Hold":
-            self.reconstructed_signal = reconstructor. reconstruct_zero_order_hold(t)
-
-
 
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
@@ -190,7 +188,41 @@ class MainWindow(QtWidgets.QMainWindow):
     # to stop mixer thread before exit the program        
     def closeEvent(self, event): 
         self.mixer.stop() 
-        event.accept()         
+        event.accept()  
+     
+        
+    def add_noise(self, SNR): 
+        # SNR = 10**(value / 10)
+        print("SNR: ", SNR)
+    
+        original_signal = self.signal.y_vec
+            
+        signal_power = np.mean(original_signal**2)
+        
+        noise_power = signal_power / SNR
+        if SNR == 1:
+            noisy_signal = original_signal
+        else:
+            noise = np.sqrt(noise_power) * np.random.normal(size=original_signal.shape)
+            noisy_signal = original_signal + noise
+                
+        original_signal = noisy_signal
+        # Clear any previous plots
+        self.ui.original_signal_graph.plotItem.clear() 
+        self.ui.reconstructed_signal_graph.plotItem.clear()
+
+        # Plot the original signal
+        self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal, pen='w')
+
+        # Set the range for both plots to match the signal size
+        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
+        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
+
+        # Sample and reconstruct signal after loading
+        self._resample()
+        self._reconstruct()
+        
+                 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
