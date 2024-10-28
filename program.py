@@ -4,6 +4,7 @@ from gui import Ui_MainWindow
 from mixer import Mixer
 
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QTableWidgetItem
 import pyqtgraph as pg
 import sys
 import pandas as pd
@@ -33,6 +34,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.max_frequency = 1150
 
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
+        self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
         
         self.is_mixer_running = False
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
@@ -184,7 +186,29 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event): 
         self.mixer.stop() 
         event.accept()         
+    def test_cases(self):
+        test=self.ui.tests_comboBox.currentText()
+        if test=="Test Case 2":
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase
+            # Insert the second row
+            row_2_index = self.ui.tableWidget.rowCount() 
+            self.ui.tableWidget.insertRow(row_2_index)    
+            # Set values for the second row
+            self.ui.tableWidget.setItem(row_2_index, 0, QTableWidgetItem(str(4)))  # Frequency
+            self.ui.tableWidget.setItem(row_2_index, 1, QTableWidgetItem(str(6)))  # Amplitude
+            self.ui.tableWidget.setItem(row_2_index, 2, QTableWidgetItem(str(0)))  # Phase
+            
 
+        
+
+        # elif test=="Test Case 1":
+             
+        # elif test=="Test Case 1":
+             
+
+             
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     ui = MainWindow()

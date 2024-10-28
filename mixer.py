@@ -3,7 +3,6 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5 import  QtGui, QtWidgets
 class Mixer(QThread):
     update_data_signal = pyqtSignal(dict)
-
     def __init__(self, signals_table, preview_graph):
         super().__init__()
         self.signals_table = signals_table
