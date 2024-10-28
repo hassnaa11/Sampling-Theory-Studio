@@ -135,12 +135,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def plot_composed_signal(self):
         self.mixer.stop()
-        self.ui.side_bar_widget.hide() 
-        self.sidebar_visible = not self.sidebar_visible
-        self.centralWidget().layout().update() 
+        
         self.ui.original_signal_graph.plotItem.clear()  
         self.ui.reconstructed_signal_graph.plotItem.clear()
         self.ui.difference_signal_graph.plotItem.clear()
+        self.ui.side_bar_widget.hide() 
+        self.sidebar_visible = not self.sidebar_visible
+        self.centralWidget().layout().update() 
 
         if int(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
             self.sampling_frequency = 2 * int(self.mixer.max_frequency)
