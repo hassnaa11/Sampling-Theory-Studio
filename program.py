@@ -139,6 +139,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.original_signal_graph.plotItem.clear()  
         self.ui.reconstructed_signal_graph.plotItem.clear()
         self.ui.difference_signal_graph.plotItem.clear()
+        self.ui.frequancy_domain_graph.plotItem.clear()
         self.ui.side_bar_widget.hide() 
         self.sidebar_visible = not self.sidebar_visible
         self.centralWidget().layout().update() 
@@ -175,6 +176,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.original_signal_graph.plotItem.clear()  
             self.ui.reconstructed_signal_graph.plotItem.clear() 
             self.ui.difference_signal_graph.plotItem.clear()
+            self.ui.frequancy_domain_graph.plotItem.clear()
 
     def _resample(self):
         if(self.ui.noise_checkBox.isChecked()):
@@ -234,6 +236,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Plot the difference signal
         self._calculate_difference()
+        self.create_frequency_domain(self.ui.frequancy_domain_graph)
 
     def _calculate_difference(self):
         if not self.signal or not self.reconstructed_signal:
@@ -318,15 +321,47 @@ class MainWindow(QtWidgets.QMainWindow):
             self._resample()
             self._reconstruct()      
 
-    # def toggle_sidebar(self):
-    #     if self.sidebar_visible:
-    #         self.ui.side_bar_widget.hide()  
-    #     else:
-    #         self.ui.side_bar_widget.show()  
+    def create_frequency_domain(self, frequency_graph):
+        
+        if not self.signal or not self.reconstructed_signal:
+            return
 
-    #     # Update visibility state
-    #     self.sidebar_visible = not self.sidebar_visible
-    #     self.centralWidget().layout().update() 
+        self.ui.frequancy_domain_graph.clear()
+
+        N = len(self.signal.y_vec)
+        dt = self.signal.x_vec[1] - self.signal.x_vec[0] 
+        self.frequencies = np.fft.fftfreq(N, d=dt)  
+        self.amplitude = np.abs(np.fft.fft(self.signal.y_vec)) / N  
+
+
+        # Plot original signal
+        self.frequency_line = frequency_graph.plot(
+            self.frequencies,
+            self.amplitude,
+            pen=pg.mkPen(color="yellow", width=2.5),
+            name='Original Signal'
+        )
+
+        # Plot aliased components
+        self.after_band_width_line = frequency_graph.plot(
+            self.frequencies + self.sampling_frequency,
+            self.amplitude,
+            pen=pg.mkPen(color="red"),
+            name='After Sampling Frequency'
+        )
+        self.before_band_width_line = frequency_graph.plot(
+            self.frequencies - self.sampling_frequency,
+            self.amplitude,
+            pen=pg.mkPen(color="red"),
+            name='Before Sampling Frequency'
+        )
+        # Set the range 
+        frequency_graph.plotItem.getViewBox().setRange(
+            xRange=(-self.sampling_frequency, self.sampling_frequency),  
+            yRange=(0, self.amplitude.max() * 1.1) 
+        )
+        frequency_graph.showGrid(x=True, y=True, alpha=0.3)
+
 
     def handle_radio_button(self, checked):
         if checked:
@@ -353,8 +388,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency
             self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase
-            
 
+    
         # elif test=="Test Case 1":
              
         # elif test=="Test Case 1":
