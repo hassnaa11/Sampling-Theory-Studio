@@ -4,6 +4,7 @@ from gui_2 import Ui_MainWindow
 from mixer import Mixer
 
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QTableWidgetItem
 import pyqtgraph as pg
 import sys
 import pandas as pd
@@ -17,17 +18,17 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
         self.ui.open_file_button.clicked.connect(self.open_file)
 
         self.ui.actual_radioButton.setChecked(True)
         self.ui.actual_radioButton.toggled.connect(self.update_slider_range)
         self.ui.normalized_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
-
-        self.ui.snr_horizontalSlider.valueChanged.connect(self.add_noise)
+        self.ui.snr_horizontalSlider.valueChanged.connect(self.set_SNR)
         self.ui.snr_horizontalSlider.setRange(1,50)
         self.SNR = 0
+        self.ui.noise_checkBox.setChecked(False)
+        self.ui.noise_checkBox.clicked.connect(self.add_noise)
         
         # Set initial properties
         self.signal = None
@@ -45,9 +46,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.max_frequency = 150 #this will be calculated by the function 
 
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
+        self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
         
         self.is_mixer_running = False
-        self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph, self.ui.tests_comboBox)
+        self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
 
@@ -160,11 +162,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.difference_signal_graph.plotItem.clear()
 
     def _resample(self):
-        if self.SNR == 0:
-            sampler = Sampler(self.signal)
+        if(self.ui.noise_checkBox.isChecked()):
+            sampler = Sampler(self.noisy_signal)
         else:
-            sampler = Sampler(self.noisy_signal)   
-
+            sampler = Sampler(self.signal)    
         self.sampled_signal = sampler.sample(self.sampling_frequency)
 
         # Clear previous sampling plot 
@@ -245,37 +246,72 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mixer.stop() 
         event.accept()  
      
-    def add_noise(self, SNR): 
-        self.SNR = SNR
-        print("SNR: ", self.SNR)
-        # the original signal without noise
-        original_signal = self.signal.y_vec
-        
-        # how much is noise to the signal eq-> SNR = signal / noise        
-        noise_power = original_signal / self.SNR
-        
-        # White Gaussian noise (normal noise)
-        noise = noise_power * np.random.normal(size=original_signal.shape)
-        
-        # add noise to the signal
-        noisy_signal  = original_signal + noise
-        self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS)        
-        
-        # Clear any previous plots
-        self.ui.original_signal_graph.plotItem.clear() 
-        self.ui.reconstructed_signal_graph.plotItem.clear()
+    def set_SNR(self, value):
+        if self.signal:
+            self.SNR = value 
+            print("SNR: ", self.SNR)
+            self.add_noise()
 
-        # Plot the noisy signal in the original graph
-        self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal , pen='w')
+    def add_noise(self): 
+        if self.signal:
+            # the original signal without noise
+            original_signal = self.signal.y_vec
+            
+            # how much is noise to the signal eq-> SNR = signal / noise        
+            noise_power = original_signal / self.SNR
+            
+            # White Gaussian noise (normal noise)
+            noise = noise_power * np.random.normal(size=original_signal.shape)
+            
+            # add noise to the signal
+            noisy_signal  = original_signal + noise
+            self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS)        
+            
+            # Clear any previous plots
+            self.ui.original_signal_graph.plotItem.clear() 
+            self.ui.reconstructed_signal_graph.plotItem.clear()
 
-        # Set the range for both plots to match the signal size
-        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
-        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
+            if(self.ui.noise_checkBox.isChecked()):
+                # Plot the noisy signal in the original graph
+                self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal , pen='w')
 
-        # Sample and reconstruct signal after adding noise
-        self._resample()
-        self._reconstruct()
-        
+                # Set the range for both plots to match the signal size
+                self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
+                self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
+            else:  
+                # Plot the original signal in the original graph
+                self.ui.original_signal_graph.plot(self.signal.x_vec, self.signal.y_vec , pen='w')
+
+                # Set the range for both plots to match the signal size
+                self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(self.signal.y_vec.min(), self.signal.y_vec.max()))
+                self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(self.signal.y_vec.min(), self.signal.y_vec.max()))
+                
+            # Sample and reconstruct signal
+            self._resample()
+            self._reconstruct()      
+
+               
+    def test_cases(self):
+        test=self.ui.tests_comboBox.currentText()
+        if test=="Test Case 2":
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase
+            # Check if the second row exists; if not, insert it
+            if self.ui.tableWidget.rowCount() < 2:
+                self.ui.tableWidget.insertRow(1)
+            # Set values for the second row
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase
+            
+
+        # elif test=="Test Case 1":
+             
+        # elif test=="Test Case 1":
+             
+
+             
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     ui = MainWindow()
