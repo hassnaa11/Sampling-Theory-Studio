@@ -88,6 +88,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._resample()
             self._reconstruct()
 
+            self.update_slider_range()
+
     def calculate_max_frequency(self, x, y):
         fs = 1/(x[1] - x[0])
         self.max_frequency = fs/2
@@ -107,6 +109,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(0)
+            self.set_sampling_frequency(0)  
             print("Slider in 'Normalized' mode: four max frequencies")
 
     def set_sampling_frequency(self, value):
@@ -156,6 +159,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # Sample and reconstruct signal after loading
             self._resample() 
             self._reconstruct()
+            self.update_slider_range()
         else:
             self.ui.original_signal_graph.plotItem.clear()  
             self.ui.reconstructed_signal_graph.plotItem.clear() 
