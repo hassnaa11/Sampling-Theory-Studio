@@ -30,6 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.SNR = 0
         self.ui.noise_checkBox.setChecked(False)
         self.ui.noise_checkBox.clicked.connect(self.add_noise)
+        self.is_mixed_signal = False
         
         # Set initial properties
         self.signal = None
@@ -43,16 +44,21 @@ class MainWindow(QtWidgets.QMainWindow):
         print(f"sampling frequecy initial:{self.sampling_frequency}")
         self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
         self.update_slider_range()
+        self.init_equal_space()
+        self.ui.side_bar_widget.hide()
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
-
+        self.sidebar_visible = False
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
         
         self.is_mixer_running = False
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
+        # self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
+        self.ui.error_frequency_toggle_button.toggled.connect(self.handle_radio_button)
+       
 
     def open_file(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)")
@@ -67,6 +73,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if 'x' in df.columns and 'y' in df.columns:
             x = np.array(df['x'])
             y = np.array(df['y'])
+            
+            self.is_mixed_signal = False
             
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
@@ -107,7 +115,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             print(f"max frequency in update slider{self.max_frequency}")
             self.freq_values = [1 * self.max_frequency, 2 * self.max_frequency, 3 * self.max_frequency, 4 * self.max_frequency]
-            self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
+            self.ui.fs_horizontalSlider.setRange(1, len(self.freq_values) - 1)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(0)
             self.set_sampling_frequency(0)  
@@ -132,6 +140,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.original_signal_graph.plotItem.clear()  
         self.ui.reconstructed_signal_graph.plotItem.clear()
         self.ui.difference_signal_graph.plotItem.clear()
+        self.ui.side_bar_widget.hide() 
+        self.sidebar_visible = not self.sidebar_visible
+        self.centralWidget().layout().update() 
 
         if int(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
             self.sampling_frequency = 2 * int(self.mixer.max_frequency)
@@ -189,7 +200,12 @@ class MainWindow(QtWidgets.QMainWindow):
         reconstructor = Reconstructor(self.sampled_signal)
         
         # Generate time points for reconstruction
-        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        if self.is_mixed_signal:
+            print("hey")
+            t = self.mixer.composed_x_data
+        else:    
+            t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        
         method = self.ui.methods_comboBox.currentText()
 
         if method == "whittaker_shannon":
@@ -237,11 +253,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
 
     def mixSignals(self):
+        self.is_mixed_signal = True
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.mixer.start()
+            self.ui.side_bar_widget.show()
+            self.sidebar_visible = not self.sidebar_visible
+            self.centralWidget().layout().update() 
+
         else:
-            self.mixer.stop()  
+            self.mixer.stop() 
+            
+
             
     # to stop mixer thread before exit the program        
     def closeEvent(self, event): 
@@ -251,6 +274,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_SNR(self, value):
         if self.signal:
             self.SNR = value 
+            self.ui.snr_value_label.setText(f"{self.SNR} SNR")
             print("SNR: ", self.SNR)
             self.add_noise()
 
@@ -292,7 +316,28 @@ class MainWindow(QtWidgets.QMainWindow):
             self._resample()
             self._reconstruct()      
 
-               
+    # def toggle_sidebar(self):
+    #     if self.sidebar_visible:
+    #         self.ui.side_bar_widget.hide()  
+    #     else:
+    #         self.ui.side_bar_widget.show()  
+
+    #     # Update visibility state
+    #     self.sidebar_visible = not self.sidebar_visible
+    #     self.centralWidget().layout().update() 
+
+    def handle_radio_button(self, checked):
+        if checked:
+            self.ui.error_frequency_toggle_button.setText("Show Error Difference")
+            self.ui.stackedWidget.setCurrentIndex(1)  # Frequency Domain page
+        else:
+            self.ui.error_frequency_toggle_button.setText("Show Frequency Domain")
+            self.ui.stackedWidget.setCurrentIndex(0)  # Error Difference page
+
+    def init_equal_space(self):
+        self.centralWidget().layout().setStretch(0, 1)  # Left part
+        self.centralWidget().layout().setStretch(1, 1)  # Sidebar
+
     def test_cases(self):
         test=self.ui.tests_comboBox.currentText()
         if test=="Test Case 2":
