@@ -22,7 +22,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actual_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
         self.ui.snr_horizontalSlider.valueChanged.connect(self.add_noise)
-        self.ui.snr_horizontalSlider.setRange(1,10)
+        self.ui.snr_horizontalSlider.setRange(1,50)
+        self.SNR = 0
         
         # Set initial properties
         self.signal = None
@@ -130,7 +131,10 @@ class MainWindow(QtWidgets.QMainWindow):
             
 
     def _resample(self):
-        sampler = Sampler(self.signal)
+        if self.SNR == 0:
+            sampler = Sampler(self.signal)
+        else:
+            sampler = Sampler(self.noisy_signal)    
         self.sampled_signal = sampler.sample(self.sampling_frequency)
 
         # Clear previous sampling plot 
@@ -192,37 +196,37 @@ class MainWindow(QtWidgets.QMainWindow):
      
         
     def add_noise(self, SNR): 
-        # SNR = 10**(value / 10)
-        print("SNR: ", SNR)
-    
+        self.SNR = SNR
+        print("SNR: ", self.SNR)
+        # the original signal without noise
         original_signal = self.signal.y_vec
-            
-        signal_power = np.mean(original_signal**2)
         
-        noise_power = signal_power / SNR
-        if SNR == 1:
-            noisy_signal = original_signal
-        else:
-            noise = np.sqrt(noise_power) * np.random.normal(size=original_signal.shape)
-            noisy_signal = original_signal + noise
-                
-        original_signal = noisy_signal
+        # how much is noise to the signal eq-> SNR = signal / noise        
+        noise_power = original_signal / self.SNR
+        
+        # White Gaussian noise (normal noise)
+        noise = noise_power * np.random.normal(size=original_signal.shape)
+        
+        # add noise to the signal
+        noisy_signal  = original_signal + noise
+        self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS)        
+        
         # Clear any previous plots
         self.ui.original_signal_graph.plotItem.clear() 
         self.ui.reconstructed_signal_graph.plotItem.clear()
 
-        # Plot the original signal
-        self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal, pen='w')
+        # Plot the noisy signal in the original graph
+        self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal , pen='w')
 
         # Set the range for both plots to match the signal size
-        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
-        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
+        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
+        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
 
-        # Sample and reconstruct signal after loading
+        # Sample and reconstruct signal after adding noise
         self._resample()
         self._reconstruct()
         
-                 
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
