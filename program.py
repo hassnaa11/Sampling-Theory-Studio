@@ -12,6 +12,7 @@ from models.signal import signal, signalType
 from models.sampler import Sampler           
 from models.reconstruction import Reconstructor 
 import numpy as np
+from scipy.signal import butter, filtfilt
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -139,15 +140,11 @@ class MainWindow(QtWidgets.QMainWindow):
             x = self.mixer.composed_x_data
             y = self.mixer.composed_y_data  
 
-            print(f"composed x values:{len(self.mixer.composed_x_data)}")  
-            print(f"composed y values:{len(self.mixer.composed_y_data)}")  
+            # print(f"composed x values:{self.mixer.composed_x_data}")  
+            # print(f"composed y values:{self.mixer.composed_y_data}")  
 
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
-
-            # Clear any previous plots
-            self.ui.original_signal_graph.plotItem.clear() 
-            self.ui.reconstructed_signal_graph.plotItem.clear()
 
             # Plot the original signal
             self.ui.original_signal_graph.plot(x, y, pen='w')
@@ -170,6 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
             sampler = Sampler(self.noisy_signal)
         else:
             sampler = Sampler(self.signal)    
+
         self.sampled_signal = sampler.sample(self.sampling_frequency)
 
         # Clear previous sampling plot 
@@ -314,7 +312,7 @@ class MainWindow(QtWidgets.QMainWindow):
              
         # elif test=="Test Case 1":
              
-
+    
              
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
