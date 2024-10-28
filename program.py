@@ -42,6 +42,8 @@ class MainWindow(QtWidgets.QMainWindow):
         print(f"sampling frequecy initial:{self.sampling_frequency}")
         self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
         self.update_slider_range()
+        self.init_equal_space()
+        self.ui.side_bar_widget.hide()
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
         self.sidebar_visible = False
@@ -50,8 +52,8 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.is_mixer_running = False
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
-        #self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
-        self.ui.mixer_button.clicked.connect(self.mixSignals)
+        self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
+        self.ui.mix_signals_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
         self.ui.error_frequency_toggle_button.toggled.connect(self.handle_radio_button)
        
@@ -310,11 +312,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def handle_radio_button(self, checked):
         if checked:
             self.ui.error_frequency_toggle_button.setText("Show Error Difference")
-            self.ui.stackedWidget.setCurrentIndex(1)  # Error Difference page
+            self.ui.stackedWidget.setCurrentIndex(1)  # Frequency Domain page
         else:
             self.ui.error_frequency_toggle_button.setText("Show Frequency Domain")
-            self.ui.stackedWidget.setCurrentIndex(0)  # Frequency Domain page
+            self.ui.stackedWidget.setCurrentIndex(0)  # Error Difference page
 
+    def init_equal_space(self):
+        self.centralWidget().layout().setStretch(0, 1)  # Left part
+        self.centralWidget().layout().setStretch(1, 1)  # Sidebar
 
     def test_cases(self):
         test=self.ui.tests_comboBox.currentText()
