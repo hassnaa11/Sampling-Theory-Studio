@@ -40,7 +40,7 @@ class Mixer(QThread):
 
                 if float(self.signals_table.item(row, 0).text()) > float(self.max_frequency):
                     self.max_frequency = self.signals_table.item(row, 0).text()
-                    print("max frequency: ", self.max_frequency)
+                    # print("max frequency: ", self.max_frequency)
                 
         if not(self.signals_data == signals_data):
             print("will emit")
@@ -89,4 +89,4 @@ class Mixer(QThread):
     
     def stop(self):
         print("stop")
-        self.running = False       
+        self.running = False

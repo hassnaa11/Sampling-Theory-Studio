@@ -154,6 +154,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.actual_radioButton.sizePolicy().hasHeightForWidth())
         self.actual_radioButton.setSizePolicy(sizePolicy)
+        self.actual_radioButton.setAutoExclusive(True)
         self.actual_radioButton.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
@@ -165,6 +166,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.normalized_radioButton.sizePolicy().hasHeightForWidth())
         self.normalized_radioButton.setSizePolicy(sizePolicy)
+        self.normalized_radioButton.setAutoExclusive(True)
         self.normalized_radioButton.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
@@ -420,6 +422,7 @@ class Ui_MainWindow(object):
         self.error_frequency_toggle_button.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
+        self.error_frequency_toggle_button.setAutoExclusive(False)
         self.error_frequency_toggle_button.setObjectName("error_frequency_toggle_button")
         self.verticalLayout_2.addWidget(self.error_frequency_toggle_button)
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
@@ -715,21 +718,24 @@ class Ui_MainWindow(object):
         self.noise_checkBox.setText(_translate("MainWindow", "Noise"))
         self.fs_label.setText(_translate("MainWindow", "FS"))
         self.fs_value_label.setText(_translate("MainWindow", "FS: "))
-        # self.methods_comboBox.setItemText(0, _translate("MainWindow", "Method"))
-        # self.methods_comboBox.setItemText(1, _translate("MainWindow", "Method1"))
-        # self.methods_comboBox.setItemText(2, _translate("MainWindow", "Method2"))
-        # self.methods_comboBox.setItemText(3, _translate("MainWindow", "Method3"))
+
+        ###### reconstruction method combobox #######
+        self.methods_comboBox.setItemText(0, _translate("MainWindow", "Linear"))
+        self.methods_comboBox.setItemText(1, _translate("MainWindow", "whittaker_shannon"))
+        self.methods_comboBox.setItemText(2, _translate("MainWindow", "Cubic Spline"))
+        self.methods_comboBox.setItemText(3, _translate("MainWindow", "nearest_neighbor"))
+        self.methods_comboBox.setItemText(4, _translate("MainWindow", "Zero-Order Hold"))
+        self.methods_comboBox.setItemText(5, _translate("MainWindow", "RBF interpolation"))
         self.snr_label.setText(_translate("MainWindow", "SNR"))
         self.snr_value_label.setText(_translate("MainWindow", "SNR: "))
         self.reconstructed_signal_label.setText(_translate("MainWindow", "Reconstructed Signal"))
-        self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Error Difference"))
+        self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Frequency Domain"))
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
         self.frequancy_domain_label.setText(_translate("MainWindow", "Frequency Domain"))
         self.mixer_label.setText(_translate("MainWindow", "Mixer"))
-        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Tests"))
-        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Testcase1"))
-        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Testcase2"))
-        self.tests_comboBox.setItemText(3, _translate("MainWindow", "Testcase3"))
+        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test Case 1"))
+        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Test Case 2"))
+        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Test Case 3"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "frequency"))
         item = self.tableWidget.horizontalHeaderItem(1)
