@@ -22,9 +22,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actual_radioButton.toggled.connect(self.update_slider_range)
         self.ui.normalized_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
-        self.ui.snr_horizontalSlider.valueChanged.connect(self.add_noise)
+        self.ui.snr_horizontalSlider.valueChanged.connect(self.set_SNR)
         self.ui.snr_horizontalSlider.setRange(1,50)
         self.SNR = 0
+        self.ui.noise_checkBox.setChecked(False)
+        self.ui.noise_checkBox.clicked.connect(self.add_noise)
         
         # Set initial properties
         self.signal = None
@@ -169,10 +171,10 @@ class MainWindow(QtWidgets.QMainWindow):
             
 
     def _resample(self):
-        if self.SNR == 0:
-            sampler = Sampler(self.signal)
+        if(self.ui.noise_checkBox.isChecked()):
+            sampler = Sampler(self.noisy_signal)
         else:
-            sampler = Sampler(self.noisy_signal)    
+            sampler = Sampler(self.signal)    
         self.sampled_signal = sampler.sample(self.sampling_frequency)
 
         # Clear previous sampling plot 
@@ -255,39 +257,49 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mixer.stop() 
         event.accept()  
      
-        
-    def add_noise(self, SNR): 
-        self.SNR = SNR
-        print("SNR: ", self.SNR)
-        # the original signal without noise
-        original_signal = self.signal.y_vec
-        
-        # how much is noise to the signal eq-> SNR = signal / noise        
-        noise_power = original_signal / self.SNR
-        
-        # White Gaussian noise (normal noise)
-        noise = noise_power * np.random.normal(size=original_signal.shape)
-        
-        # add noise to the signal
-        noisy_signal  = original_signal + noise
-        self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS)        
-        
-        # Clear any previous plots
-        self.ui.original_signal_graph.plotItem.clear() 
-        self.ui.reconstructed_signal_graph.plotItem.clear()
+    def set_SNR(self, value):
+        if self.signal:
+            self.SNR = value 
+            print("SNR: ", self.SNR)
+            self.add_noise()
 
-        # Plot the noisy signal in the original graph
-        self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal , pen='w')
+    def add_noise(self): 
+        if self.signal:
+            # the original signal without noise
+            original_signal = self.signal.y_vec
+            
+            # how much is noise to the signal eq-> SNR = signal / noise        
+            noise_power = original_signal / self.SNR
+            
+            # White Gaussian noise (normal noise)
+            noise = noise_power * np.random.normal(size=original_signal.shape)
+            
+            # add noise to the signal
+            noisy_signal  = original_signal + noise
+            self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS)        
+            
+            # Clear any previous plots
+            self.ui.original_signal_graph.plotItem.clear() 
+            self.ui.reconstructed_signal_graph.plotItem.clear()
 
-        # Set the range for both plots to match the signal size
-        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
-        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
+            if(self.ui.noise_checkBox.isChecked()):
+                # Plot the noisy signal in the original graph
+                self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal , pen='w')
 
-        # Sample and reconstruct signal after adding noise
-        self._resample()
-        self._reconstruct()
-        
+                # Set the range for both plots to match the signal size
+                self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
+                self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
+            else:  
+                # Plot the original signal in the original graph
+                self.ui.original_signal_graph.plot(self.signal.x_vec, self.signal.y_vec , pen='w')
 
+                # Set the range for both plots to match the signal size
+                self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(self.signal.y_vec.min(), self.signal.y_vec.max()))
+                self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(self.signal.y_vec.min(), self.signal.y_vec.max()))
+                
+            # Sample and reconstruct signal
+            self._resample()
+            self._reconstruct()      
 
                
     def test_cases(self):
