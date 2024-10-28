@@ -53,8 +53,8 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.is_mixer_running = False
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
-        self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
-        self.ui.mix_signals_button.clicked.connect(self.mixSignals)
+        # self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
+        self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
         self.ui.error_frequency_toggle_button.toggled.connect(self.handle_radio_button)
        
@@ -135,7 +135,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def plot_composed_signal(self):
         self.mixer.stop()
-        
+        self.ui.side_bar_widget.hide() 
+        self.sidebar_visible = not self.sidebar_visible
+        self.centralWidget().layout().update() 
         self.ui.original_signal_graph.plotItem.clear()  
         self.ui.reconstructed_signal_graph.plotItem.clear()
         self.ui.difference_signal_graph.plotItem.clear()
@@ -256,8 +258,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.mixer.start()
+            self.ui.side_bar_widget.show()
+            self.sidebar_visible = not self.sidebar_visible
+            self.centralWidget().layout().update() 
+
         else:
-            self.mixer.stop()  
+            self.mixer.stop() 
+            
+
             
     # to stop mixer thread before exit the program        
     def closeEvent(self, event): 
@@ -309,15 +317,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self._resample()
             self._reconstruct()      
 
-    def toggle_sidebar(self):
-        if self.sidebar_visible:
-            self.ui.side_bar_widget.hide()  
-        else:
-            self.ui.side_bar_widget.show()  
+    # def toggle_sidebar(self):
+    #     if self.sidebar_visible:
+    #         self.ui.side_bar_widget.hide()  
+    #     else:
+    #         self.ui.side_bar_widget.show()  
 
-        # Update visibility state
-        self.sidebar_visible = not self.sidebar_visible
-        self.centralWidget().layout().update() 
+    #     # Update visibility state
+    #     self.sidebar_visible = not self.sidebar_visible
+    #     self.centralWidget().layout().update() 
 
     def handle_radio_button(self, checked):
         if checked:

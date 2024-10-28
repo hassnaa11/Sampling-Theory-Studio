@@ -692,19 +692,19 @@ class Ui_MainWindow(object):
         self.apply_button_2.setObjectName("apply_button_2")
         self.horizontalLayout_9.addWidget(self.apply_button_2)
 
-        self.mix_signals_button = QtWidgets.QPushButton(self.side_bar_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.mix_signals_button.sizePolicy().hasHeightForWidth())
-        self.mix_signals_button.setSizePolicy(sizePolicy)
-        self.mix_signals_button.setMinimumSize(QtCore.QSize(80, 30))
-        self.mix_signals_button.setStyleSheet("font: italic 10pt \"Georgia\";\n"
-"background-color: rgb(169, 222, 216);\n"
-"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"border-radius: 10px;")
-        self.mix_signals_button.setObjectName("mix_signals_button")
-        self.horizontalLayout_9.addWidget(self.mix_signals_button)
+#         self.mix_signals_button = QtWidgets.QPushButton(self.side_bar_widget)
+#         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+#         sizePolicy.setHorizontalStretch(0)
+#         sizePolicy.setVerticalStretch(0)
+#         sizePolicy.setHeightForWidth(self.mix_signals_button.sizePolicy().hasHeightForWidth())
+#         self.mix_signals_button.setSizePolicy(sizePolicy)
+#         self.mix_signals_button.setMinimumSize(QtCore.QSize(80, 30))
+#         self.mix_signals_button.setStyleSheet("font: italic 10pt \"Georgia\";\n"
+# "background-color: rgb(169, 222, 216);\n"
+# "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+# "border-radius: 10px;")
+#         self.mix_signals_button.setObjectName("mix_signals_button")
+#         self.horizontalLayout_9.addWidget(self.mix_signals_button)
 
         self.horizontalLayout_18 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
@@ -766,4 +766,4 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "phase"))
         self.mixed_signal_label.setText(_translate("MainWindow", "Mixed Signal"))
         self.apply_button_2.setText(_translate("MainWindow", "Apply"))
-        self.mix_signals_button.setText(_translate("MainWindow", "Add"))
+        # self.mix_signals_button.setText(_translate("MainWindow", "Add"))
