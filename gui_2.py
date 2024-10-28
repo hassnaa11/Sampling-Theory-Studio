@@ -153,6 +153,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.actual_radioButton.sizePolicy().hasHeightForWidth())
         self.actual_radioButton.setSizePolicy(sizePolicy)
+        self.actual_radioButton.setAutoExclusive(True)
         self.actual_radioButton.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
@@ -164,6 +165,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.normalized_radioButton.sizePolicy().hasHeightForWidth())
         self.normalized_radioButton.setSizePolicy(sizePolicy)
+        self.normalized_radioButton.setAutoExclusive(True)
         self.normalized_radioButton.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
@@ -418,6 +420,7 @@ class Ui_MainWindow(object):
         self.error_frequency_toggle_button.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
+        self.error_frequency_toggle_button.setAutoExclusive(False)
         self.error_frequency_toggle_button.setObjectName("error_frequency_toggle_button")
         self.verticalLayout_2.addWidget(self.error_frequency_toggle_button)
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
@@ -722,7 +725,7 @@ class Ui_MainWindow(object):
         self.snr_label.setText(_translate("MainWindow", "SNR"))
         self.snr_value_label.setText(_translate("MainWindow", "SNR: "))
         self.reconstructed_signal_label.setText(_translate("MainWindow", "Reconstructed Signal"))
-        self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Error Difference"))
+        self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Frequency Domain"))
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
         self.frequancy_domain_label.setText(_translate("MainWindow", "Frequency Domain"))
         self.mixer_label.setText(_translate("MainWindow", "Mixer"))

@@ -44,14 +44,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.update_slider_range()
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
-
+        self.sidebar_visible = False
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
         
         self.is_mixer_running = False
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
+        #self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
+        self.ui.error_frequency_toggle_button.toggled.connect(self.handle_radio_button)
+       
 
     def open_file(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)")
@@ -294,7 +297,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self._resample()
             self._reconstruct()      
 
-               
+    def toggle_sidebar(self):
+        if self.sidebar_visible:
+            self.ui.side_bar_widget.hide()  
+        else:
+            self.ui.side_bar_widget.show()  
+
+        # Update visibility state
+        self.sidebar_visible = not self.sidebar_visible
+        self.centralWidget().layout().update() 
+
+    def handle_radio_button(self, checked):
+        if checked:
+            self.ui.error_frequency_toggle_button.setText("Show Error Difference")
+            self.ui.stackedWidget.setCurrentIndex(1)  # Error Difference page
+        else:
+            self.ui.error_frequency_toggle_button.setText("Show Frequency Domain")
+            self.ui.stackedWidget.setCurrentIndex(0)  # Frequency Domain page
+
+
     def test_cases(self):
         test=self.ui.tests_comboBox.currentText()
         if test=="Test Case 2":
