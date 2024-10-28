@@ -582,26 +582,30 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
         self.tableWidget.setMinimumSize(QtCore.QSize(300, 0))
-        self.tableWidget.setStyleSheet("QTabelWidget {\n"
-"    background-color: rgb(0, 0, 0);\n"
-"    background-color : back;\n"
-"    color: rgb(255, 255, 255);\n"
-"    border : none;\n"
-"    font-family: \"Arial\";\n"
-"    font-size : 14px;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item {\n"
-"borde-bottom: 1px solid gray;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item : selected {\n"
-"background-color : darckgray;\n"
-"}\n"
-"\n"
-"QHeaderView :: section{\n"
-"border : none\n"
-"}")
+        self.tableWidget.setStyleSheet("""
+            QTableWidget {
+                background-color: black;
+                color: white;
+                border: none;
+                font-family: "Arial";
+                font-size: 14px;
+            }
+            
+            QTableWidget::item {
+                border-bottom: 1px solid gray;
+            }
+            
+            QTableWidget::item:selected {
+                background-color: darkgray;
+            }
+            
+            QHeaderView::section {
+                background-color: black;
+                color: white;
+                border: none;
+            }
+        """)
+
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setRowCount(0)
