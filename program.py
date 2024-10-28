@@ -29,6 +29,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.SNR = 0
         self.ui.noise_checkBox.setChecked(False)
         self.ui.noise_checkBox.clicked.connect(self.add_noise)
+        self.is_mixed_signal = False
         
         # Set initial properties
         self.signal = None
@@ -72,6 +73,8 @@ class MainWindow(QtWidgets.QMainWindow):
             x = np.array(df['x'])
             y = np.array(df['y'])
             
+            self.is_mixed_signal = False
+            
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
 
@@ -111,7 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             print(f"max frequency in update slider{self.max_frequency}")
             self.freq_values = [1 * self.max_frequency, 2 * self.max_frequency, 3 * self.max_frequency, 4 * self.max_frequency]
-            self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
+            self.ui.fs_horizontalSlider.setRange(1, len(self.freq_values) - 1)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(0)
             self.set_sampling_frequency(0)  
@@ -196,7 +199,12 @@ class MainWindow(QtWidgets.QMainWindow):
         reconstructor = Reconstructor(self.sampled_signal)
         
         # Generate time points for reconstruction
-        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        if self.is_mixed_signal:
+            print("hey")
+            t = self.mixer.composed_x_data
+        else:    
+            t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        
         method = self.ui.methods_comboBox.currentText()
 
         if method == "whittaker_shannon":
@@ -244,6 +252,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
 
     def mixSignals(self):
+        self.is_mixed_signal = True
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.mixer.start()
@@ -258,6 +267,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_SNR(self, value):
         if self.signal:
             self.SNR = value 
+            self.ui.snr_value_label.setText(f"{self.SNR} SNR")
             print("SNR: ", self.SNR)
             self.add_noise()
 
