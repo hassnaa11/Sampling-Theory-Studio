@@ -4,11 +4,10 @@ from PyQt5 import  QtGui, QtWidgets
 class Mixer(QThread):
     update_data_signal = pyqtSignal(dict)
 
-    def __init__(self, signals_table, preview_graph, tests_comboBox):
+    def __init__(self, signals_table, preview_graph):
         super().__init__()
         self.signals_table = signals_table
         self.preview_graph = preview_graph
-        self.tests_comboBox = tests_comboBox
         self.signals_table.insertRow(self.signals_table.rowCount())
         
         self.remove_icon = QtGui.QIcon()
