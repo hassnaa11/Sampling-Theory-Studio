@@ -29,6 +29,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reconstructed_signal = None
         self.sampling_curve = None
         self.reconstruct_curve = None
+        self.difference_curve = None  # To plot the difference signal curve
         self.sampling_frequency = 700 # this would be changed by the slider
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
@@ -36,7 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         
         self.is_mixer_running = False
-        self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
+        self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph, self.ui.tests_comboBox)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
 
@@ -133,27 +134,34 @@ class MainWindow(QtWidgets.QMainWindow):
     def plot_composed_signal(self):
         self.mixer.stop()
         
-        self.sampling_frequency = 10
-        
-        x = self.mixer.composed_x_data
-        y = self.mixer.composed_y_data
-        
-        # Initialize the signal
-        self.signal = signal(x, y, signalType.CONTINUOUS)
-
-        # Clear any previous plots
-        self.ui.original_signal_graph.plotItem.clear() 
+        self.ui.original_signal_graph.plotItem.clear()  
         self.ui.reconstructed_signal_graph.plotItem.clear()
+                
+        if int(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
+            self.sampling_frequency = 2 * int(self.mixer.max_frequency)
+            
+            x = self.mixer.composed_x_data
+            y = self.mixer.composed_y_data    
+        
+            # Initialize the signal
+            self.signal = signal(x, y, signalType.CONTINUOUS)
 
-        # Plot the original signal
-        self.ui.original_signal_graph.plot(x, y, pen='w')
+            # Clear any previous plots
+            self.ui.original_signal_graph.plotItem.clear() 
+            self.ui.reconstructed_signal_graph.plotItem.clear()
 
-        # Set the range for both plots to match the signal size
-        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
-        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
+            # Plot the original signal
+            self.ui.original_signal_graph.plot(x, y, pen='w')
 
-        # Sample and reconstruct signal after loading
-        self._resample()        
+            # Set the range for both plots to match the signal size
+            self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
+            self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
+
+            # Sample and reconstruct signal after loading
+            self._resample() 
+        else:
+            self.ui.original_signal_graph.plotItem.clear()  
+            self.ui.reconstructed_signal_graph.plotItem.clear()         
             
 
     def _resample(self):
@@ -179,19 +187,23 @@ class MainWindow(QtWidgets.QMainWindow):
         reconstructor = Reconstructor(self.sampled_signal)
         
         # Generate time points for reconstruction
-        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1150)
+        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], self.sampling_frequency)
         method = self.ui.methods_comboBox.currentText()
 
         if method == "whittaker_shannon":
                     self.reconstructed_signal = reconstructor.reconstruct_shannon(t, self.sampling_frequency)
-        elif method == "Zero-Order Hold":
-                    self.reconstructed_signal = reconstructor.reconstruct_zero_order_hold(t)
+        elif method == "RBF interpolation":
+                    self.reconstructed_signal = reconstructor. reconstruct_RBF(t)
         elif method == "nearest_neighbor":
                     self.reconstructed_signal=reconstructor.reconstruct_nearest_neighbor(t)
         elif method == "Linear":
             self.reconstructed_signal = reconstructor.reconstruct_linear(t)
         elif method == "Cubic Spline":
             self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
+        elif method=="Zero-Order Hold":
+            self.reconstructed_signal = reconstructor. reconstruct_zero_order_hold(t)
+
+
 
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
@@ -203,6 +215,30 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reconstructed_signal.y_vec,
             pen=pg.mkPen(color=(255, 255, 255))  # Green pen
         )
+
+        # Plot the difference signal
+        self._calculate_difference()
+
+    def _calculate_difference(self):
+        if not self.signal or not self.reconstructed_signal:
+            return
+        
+        # Define x_diff to be the same as the original signal's x-values
+        x_diff = self.signal.x_vec
+        
+        # Interpolate the reconstructed signal to match the original signal's x values
+        y_interp = np.interp(x_diff, self.reconstructed_signal.x_vec, self.reconstructed_signal.y_vec)
+        
+        # Calculate the difference
+        y_diff = self.signal.y_vec - y_interp
+
+        # Clear any previous difference plot
+        self.ui.difference_signal_graph.plotItem.clear()
+
+        # Plot the difference signal
+        self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
+
+
 
     def mixSignals(self):
         self.is_mixer_running = not self.is_mixer_running 
