@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5 import QtCore
-from gui import Ui_MainWindow
+from gui_2 import Ui_MainWindow
 from mixer import Mixer
 
 from PyQt5.QtWidgets import QFileDialog
@@ -20,6 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.open_file_button.clicked.connect(self.open_file)
         self.ui.actual_radioButton.toggled.connect(self.update_slider_range)
+        self.ui.normalized_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
         self.ui.snr_horizontalSlider.valueChanged.connect(self.add_noise)
         self.ui.snr_horizontalSlider.setRange(1,50)
@@ -31,9 +32,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reconstructed_signal = None
         self.sampling_curve = None
         self.reconstruct_curve = None
+        self.difference_curve = None  # To plot the difference signal curve
         self.sampling_frequency = 700 # this would be changed by the slider
         self.freq_values = []
-        self.max_frequency = 1150
+        self.max_frequency = 150 #this will be calculated by the function 
 
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         
@@ -41,7 +43,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph, self.ui.tests_comboBox)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
-
 
     def open_file(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)")
@@ -60,6 +61,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
 
+            # Calculate the maximum frequency for the loaded signal
+            self.calculate_max_frequency_fft(x, y)
+
             # Clear any previous plots
             self.ui.original_signal_graph.plotItem.clear() 
             self.ui.reconstructed_signal_graph.plotItem.clear()
@@ -74,13 +78,46 @@ class MainWindow(QtWidgets.QMainWindow):
             # Sample and reconstruct signal after loading
             self._resample()
             self._reconstruct()
-            
+    
+    def calculate_max_frequency_fft(self, x, y):
+        # # Subtract the mean to remove DC component
+        # y = y - np.mean(y)
+        
+        # # Calculate the sampling rate
+        # time_intervals = np.diff(x)
+        # avg_time_interval = np.mean(time_intervals)
+        # sampling_rate = 1 / avg_time_interval  # in Hz
+
+        # # Perform FFT with zero-padding to increase frequency resolution
+        # N = len(y)
+        # N_fft = 2**self.next_power_of_2(N)  # Use the next power of 2 for FFT length
+        # fft_vals = np.fft.fft(y, N_fft)
+        # fft_freqs = np.fft.fftfreq(N_fft, d=avg_time_interval)
+
+        # # Use only the positive frequencies (as FFT is symmetric)
+        # positive_freq_indices = np.where(fft_freqs > 0)  # Strictly positive frequencies
+        # positive_freqs = fft_freqs[positive_freq_indices]
+        # positive_fft_vals = np.abs(fft_vals[positive_freq_indices])
+
+        # # Find the peak frequency (highest amplitude)
+        # peak_freq_index = np.argmax(positive_fft_vals)
+        # self.max_frequency = positive_freqs[peak_freq_index]
+
+        fs = 1/(x[1] - x[0])
+        self.max_frequency = fs/2
+
+        print(f"Calculated maximum frequency: {self.max_frequency} Hz")
+
+    def next_power_of_2(self, x):
+        return int(np.ceil(np.log2(x)))
+
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
-            self.ui.fs_horizontalSlider.setRange(1, self.max_frequency)
+            self.ui.fs_horizontalSlider.setRange(0, 1150)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             print("Slider in 'Actual' mode: 1 to 1150")
         else:
+            print(f"max frequency in update slider{self.max_frequency}")
             self.freq_values = [1 * self.max_frequency, 2 * self.max_frequency, 3 * self.max_frequency, 4 * self.max_frequency]
             self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
             self.ui.fs_horizontalSlider.setSingleStep(1)
@@ -181,6 +218,29 @@ class MainWindow(QtWidgets.QMainWindow):
             pen=pg.mkPen(color=(255, 255, 255))  # Green pen
         )
 
+        # Plot the difference signal
+        self._calculate_difference()
+
+    def _calculate_difference(self):
+        if not self.signal or not self.reconstructed_signal:
+            return
+        
+        # Define x_diff to be the same as the original signal's x-values
+        x_diff = self.signal.x_vec
+        
+        # Interpolate the reconstructed signal to match the original signal's x values
+        y_interp = np.interp(x_diff, self.reconstructed_signal.x_vec, self.reconstructed_signal.y_vec)
+        
+        # Calculate the difference
+        y_diff = self.signal.y_vec - y_interp
+
+        # Clear any previous difference plot
+        self.ui.difference_signal_graph.plotItem.clear()
+
+        # Plot the difference signal
+        self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
+
+
 
     def mixSignals(self):
         self.is_mixer_running = not self.is_mixer_running 
@@ -233,3 +293,4 @@ if __name__ == "__main__":
     ui = MainWindow()
     ui.show()
     app.exec_()        
+    
