@@ -302,6 +302,8 @@ class Ui_MainWindow(object):
 "")
         self.snr_label.setObjectName("snr_label")
         self.horizontalLayout_4.addWidget(self.snr_label)
+
+        ###### fs_horizontalSlider ########
         self.fs_horizontalSlider = QtWidgets.QSlider(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -700,6 +702,8 @@ class Ui_MainWindow(object):
         self.normalized_radioButton.setText(_translate("MainWindow", "Normalized"))
         self.fs_label.setText(_translate("MainWindow", "FS"))
         self.fs_value_label.setText(_translate("MainWindow", "FS: "))
+
+        ###### reconstruction method combobox #######
         self.methods_comboBox.setItemText(0, _translate("MainWindow", "Method"))
         self.methods_comboBox.setItemText(1, _translate("MainWindow", "Method1"))
         self.methods_comboBox.setItemText(2, _translate("MainWindow", "Method2"))
