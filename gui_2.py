@@ -137,6 +137,7 @@ class Ui_MainWindow(object):
         self.original_signal_graph.setTabletTracking(True)
         self.original_signal_graph.setAcceptDrops(True)
         self.original_signal_graph.setAutoFillBackground(False)
+        # self.original_signal_graph.setBackground((27, 27, 27))
         self.original_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
@@ -404,6 +405,7 @@ class Ui_MainWindow(object):
         self.reconstructed_signal_graph.setTabletTracking(True)
         self.reconstructed_signal_graph.setAcceptDrops(True)
         self.reconstructed_signal_graph.setAutoFillBackground(False)
+        # self.reconstructed_signal_graph.setBackground((27, 27, 27))
         self.reconstructed_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "button-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
@@ -466,6 +468,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.difference_signal_graph.sizePolicy().hasHeightForWidth())
         self.difference_signal_graph.setSizePolicy(sizePolicy)
         self.difference_signal_graph.setMinimumSize(QtCore.QSize(0, 110))
+        # self.difference_signal_graph.setBackground((27,27,27))
         self.difference_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
@@ -504,6 +507,7 @@ class Ui_MainWindow(object):
         self.frequancy_domain_graph.setSizePolicy(sizePolicy)
         self.frequancy_domain_graph.setMinimumSize(QtCore.QSize(0, 120))
         self.frequancy_domain_graph.setBaseSize(QtCore.QSize(1100, 110))
+        # self.frequancy_domain_graph.setBackground((27,27,27))
         self.frequancy_domain_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"

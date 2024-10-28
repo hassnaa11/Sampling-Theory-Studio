@@ -27,6 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.SNR = 0
         self.ui.noise_checkBox.setChecked(False)
         self.ui.noise_checkBox.clicked.connect(self.add_noise)
+        self.is_mixed_signal = False
         
         # Set initial properties
         self.signal = None
@@ -38,6 +39,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sampling_frequency = 700 # this would be changed by the slider
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
+        self.ui.actual_radioButton.setChecked(True)
 
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         
@@ -59,6 +61,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if 'x' in df.columns and 'y' in df.columns:
             x = np.array(df['x'])
             y = np.array(df['y'])
+            
+            self.is_mixed_signal = False
             
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
@@ -115,13 +119,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
-            self.ui.fs_horizontalSlider.setRange(0, 1150)
+            self.ui.fs_horizontalSlider.setRange(1, 1150)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             print("Slider in 'Actual' mode: 1 to 1150")
         else:
             print(f"max frequency in update slider{self.max_frequency}")
             self.freq_values = [1 * self.max_frequency, 2 * self.max_frequency, 3 * self.max_frequency, 4 * self.max_frequency]
-            self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
+            self.ui.fs_horizontalSlider.setRange(1, len(self.freq_values) - 1)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             print("Slider in 'Normalized' mode: four max frequencies")
 
@@ -162,8 +166,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
             self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
 
-            # Sample and reconstruct signal after loading
-            self._resample() 
+            # Sample and reconstruct signal
+            self._resample()
+            self._reconstruct()
         else:
             self.ui.original_signal_graph.plotItem.clear()  
             self.ui.reconstructed_signal_graph.plotItem.clear()         
@@ -195,7 +200,12 @@ class MainWindow(QtWidgets.QMainWindow):
         reconstructor = Reconstructor(self.sampled_signal)
         
         # Generate time points for reconstruction
-        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], self.sampling_frequency)
+        if self.is_mixed_signal:
+            print("hey")
+            t = self.mixer.composed_x_data
+        else:    
+            t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], self.sampling_frequency)
+        
         method = self.ui.methods_comboBox.currentText()
 
         if method == "whittaker_shannon":
@@ -245,6 +255,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def mixSignals(self):
+        self.is_mixed_signal = True
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.mixer.start()
