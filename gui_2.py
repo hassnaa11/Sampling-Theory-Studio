@@ -185,15 +185,15 @@ class Ui_MainWindow(object):
 "")
         self.fs_label.setObjectName("fs_label")
         self.horizontalLayout_4.addWidget(self.fs_label)
-        self.snr_horizontalSlider = QtWidgets.QSlider(self.centralwidget)
+        self.fs_horizontalSlider = QtWidgets.QSlider(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.snr_horizontalSlider.sizePolicy().hasHeightForWidth())
-        self.snr_horizontalSlider.setSizePolicy(sizePolicy)
-        self.snr_horizontalSlider.setMinimumSize(QtCore.QSize(80, 0))
-        self.snr_horizontalSlider.setMaximumSize(QtCore.QSize(250, 16777215))
-        self.snr_horizontalSlider.setStyleSheet("QSlider::groove:horizontal {\n"
+        sizePolicy.setHeightForWidth(self.fs_horizontalSlider.sizePolicy().hasHeightForWidth())
+        self.fs_horizontalSlider.setSizePolicy(sizePolicy)
+        self.fs_horizontalSlider.setMinimumSize(QtCore.QSize(80, 0))
+        self.fs_horizontalSlider.setMaximumSize(QtCore.QSize(250, 16777215))
+        self.fs_horizontalSlider.setStyleSheet("QSlider::groove:horizontal {\n"
 "        height: 8px;\n"
 "        background: #A9DED8;\n"
 "        border-radius: 4px;\n"
@@ -223,10 +223,10 @@ class Ui_MainWindow(object):
 "    QSlider::tick:horizontal {\n"
 "        background: white;  /* Make the ticks white */\n"
 "    }")
-        self.snr_horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.snr_horizontalSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
-        self.snr_horizontalSlider.setObjectName("snr_horizontalSlider")
-        self.horizontalLayout_4.addWidget(self.snr_horizontalSlider)
+        self.fs_horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.fs_horizontalSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
+        self.fs_horizontalSlider.setObjectName("fs_horizontalSlider")
+        self.horizontalLayout_4.addWidget(self.fs_horizontalSlider)
         self.fs_value_label = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -280,8 +280,8 @@ class Ui_MainWindow(object):
 "}\n"
 "")
         self.methods_comboBox.setObjectName("methods_comboBox")
-        self.methods_comboBox.addItem("whittaker_shannon")
         self.methods_comboBox.addItem("Linear")
+        self.methods_comboBox.addItem("whittaker_shannon")
         self.methods_comboBox.addItem("Cubic Spline")
         self.methods_comboBox.addItem("nearest_neighbor")
         self.methods_comboBox.addItem("Zero-Order Hold")
@@ -304,17 +304,15 @@ class Ui_MainWindow(object):
 "")
         self.snr_label.setObjectName("snr_label")
         self.horizontalLayout_4.addWidget(self.snr_label)
-
-        ###### fs_horizontalSlider########
-        self.fs_horizontalSlider= QtWidgets.QSlider(self.centralwidget)
-        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        # sizePolicy.setHorizontalStretch(0)
-        # sizePolicy.setVerticalStretch(0)
-        # sizePolicy.setHeightForWidth(self.fs_horizontalSlider.sizePolicy().hasHeightForWidth())
-        # self.fs_horizontalSlider.setSizePolicy(sizePolicy)
-        # self.fs_horizontalSlider.setMinimumSize(QtCore.QSize(80, 0))
-        # self.fs_horizontalSlider.setMaximumSize(QtCore.QSize(250, 16777215))
-        self.fs_horizontalSlider.setStyleSheet("QSlider::groove:horizontal {\n"
+        self.snr_horizontalSlider = QtWidgets.QSlider(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.snr_horizontalSlider.sizePolicy().hasHeightForWidth())
+        self.snr_horizontalSlider.setSizePolicy(sizePolicy)
+        self.snr_horizontalSlider.setMinimumSize(QtCore.QSize(80, 0))
+        self.snr_horizontalSlider.setMaximumSize(QtCore.QSize(250, 16777215))
+        self.snr_horizontalSlider.setStyleSheet("QSlider::groove:horizontal {\n"
 "        height: 8px;\n"
 "        background: #A9DED8;\n"
 "        border-radius: 4px;\n"
@@ -344,10 +342,10 @@ class Ui_MainWindow(object):
 "    QSlider::tick:horizontal {\n"
 "        background: white;  /* Make the ticks white */\n"
 "    }")
-        self.fs_horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        # self.fs_horizontalSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
-        self.fs_horizontalSlider.setObjectName("fs_horizontalSlider")
-        self.horizontalLayout_4.addWidget(self.fs_horizontalSlider)
+        self.snr_horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.snr_horizontalSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
+        self.snr_horizontalSlider.setObjectName("snr_horizontalSlider")
+        self.horizontalLayout_4.addWidget(self.snr_horizontalSlider)
         self.snr_value_label = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -706,8 +704,8 @@ class Ui_MainWindow(object):
         self.fs_value_label.setText(_translate("MainWindow", "FS: "))
 
         ###### reconstruction method combobox #######
-        self.methods_comboBox.setItemText(0, _translate("MainWindow", "whittaker_shannon"))
-        self.methods_comboBox.setItemText(1, _translate("MainWindow", "Linear"))
+        self.methods_comboBox.setItemText(0, _translate("MainWindow", "Linear"))
+        self.methods_comboBox.setItemText(1, _translate("MainWindow", "whittaker_shannon"))
         self.methods_comboBox.setItemText(2, _translate("MainWindow", "Cubic Spline"))
         self.methods_comboBox.setItemText(3, _translate("MainWindow", "nearest_neighbor"))
         self.methods_comboBox.setItemText(4, _translate("MainWindow", "Zero-Order Hold"))

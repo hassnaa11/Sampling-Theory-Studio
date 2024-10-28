@@ -19,9 +19,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self.ui.open_file_button.clicked.connect(self.open_file)
+
+        self.ui.actual_radioButton.setChecked(True)
         self.ui.actual_radioButton.toggled.connect(self.update_slider_range)
         self.ui.normalized_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
+
+        self.ui.snr_horizontalSlider.valueChanged.connect(self.add_noise)
+        self.ui.snr_horizontalSlider.setRange(1,50)
+        self.SNR = 0
         
         # Set initial properties
         self.signal = None
@@ -30,7 +36,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sampling_curve = None
         self.reconstruct_curve = None
         self.difference_curve = None  
-        self.sampling_frequency = 700 # this would be changed by the slider
+        self.sampling_frequency = 700 
+        self.ui.fs_horizontalSlider.setValue(self.sampling_frequency)  # Set slider to 700 on startup
+        print(f"sampling frequecy initial:{self.sampling_frequency}")
+        self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
+        self.update_slider_range()
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
 
@@ -71,52 +81,23 @@ class MainWindow(QtWidgets.QMainWindow):
             # Set the range for both plots to match the signal size
             self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
             self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
-            self.ui.difference_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
 
             # Sample and reconstruct signal after loading
             self._resample()
             self._reconstruct()
 
-            self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
-
-    
     def calculate_max_frequency(self, x, y):
         fs = 1/(x[1] - x[0])
         self.max_frequency = fs/2
 
         print(f"Calculated maximum frequency: {self.max_frequency} Hz")
-        # # Subtract the mean to remove DC component
-        # y = y - np.mean(y)
         
-        # # Calculate the sampling rate
-        # time_intervals = np.diff(x)
-        # avg_time_interval = np.mean(time_intervals)
-        # sampling_rate = 1 / avg_time_interval  # in Hz
-
-        # # Perform FFT with zero-padding to increase frequency resolution
-        # N = len(y)
-        # N_fft = 2**self.next_power_of_2(N)  # Use the next power of 2 for FFT length
-        # fft_vals = np.fft.fft(y, N_fft)
-        # fft_freqs = np.fft.fftfreq(N_fft, d=avg_time_interval)
-
-        # # Use only the positive frequencies (as FFT is symmetric)
-        # positive_freq_indices = np.where(fft_freqs > 0)  # Strictly positive frequencies
-        # positive_freqs = fft_freqs[positive_freq_indices]
-        # positive_fft_vals = np.abs(fft_vals[positive_freq_indices])
-
-        # # Find the peak frequency (highest amplitude)
-        # peak_freq_index = np.argmax(positive_fft_vals)
-        # self.max_frequency = positive_freqs[peak_freq_index]
-
-    def next_power_of_2(self, x):
-        return int(np.ceil(np.log2(x)))
-
     def update_slider_range(self):
-        print("i am in update slider")
         if self.ui.actual_radioButton.isChecked():
             self.ui.fs_horizontalSlider.setRange(1, 1000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
-            self.ui.fs_horizontalSlider.setValue(self.sampling_frequency) 
+            self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
+            self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
             print("Slider in 'Actual' mode: 1 to 1150")
         else:
             print(f"max frequency in update slider{self.max_frequency}")
@@ -144,13 +125,18 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.ui.original_signal_graph.plotItem.clear()  
         self.ui.reconstructed_signal_graph.plotItem.clear()
-                
+        self.ui.difference_signal_graph.plotItem.clear()
+
         if int(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
             self.sampling_frequency = 2 * int(self.mixer.max_frequency)
+            self.max_frequency = int(self.mixer.max_frequency)
             
             x = self.mixer.composed_x_data
-            y = self.mixer.composed_y_data    
-        
+            y = self.mixer.composed_y_data  
+
+            print(f"composed x values:{len(self.mixer.composed_x_data)}")  
+            print(f"composed y values:{len(self.mixer.composed_y_data)}")  
+
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
 
@@ -164,17 +150,21 @@ class MainWindow(QtWidgets.QMainWindow):
             # Set the range for both plots to match the signal size
             self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
             self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
-            self.ui.difference_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
 
             # Sample and reconstruct signal after loading
             self._resample() 
+            self._reconstruct()
         else:
             self.ui.original_signal_graph.plotItem.clear()  
-            self.ui.reconstructed_signal_graph.plotItem.clear()         
-            
+            self.ui.reconstructed_signal_graph.plotItem.clear() 
+            self.ui.difference_signal_graph.plotItem.clear()
 
     def _resample(self):
-        sampler = Sampler(self.signal)
+        if self.SNR == 0:
+            sampler = Sampler(self.signal)
+        else:
+            sampler = Sampler(self.noisy_signal)   
+
         self.sampled_signal = sampler.sample(self.sampling_frequency)
 
         # Clear previous sampling plot 
@@ -201,16 +191,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if method == "whittaker_shannon":
                     self.reconstructed_signal = reconstructor.reconstruct_shannon(t, self.sampling_frequency)
-        elif method == "RBF interpolation":
-                    self.reconstructed_signal = reconstructor. reconstruct_RBF(t)
+        elif method == "Zero-Order Hold":
+                    self.reconstructed_signal = reconstructor.reconstruct_zero_order_hold(t)
         elif method == "nearest_neighbor":
                     self.reconstructed_signal=reconstructor.reconstruct_nearest_neighbor(t)
         elif method == "Linear":
             self.reconstructed_signal = reconstructor.reconstruct_linear(t)
         elif method == "Cubic Spline":
             self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
-        elif method=="Zero-Order Hold":
-            self.reconstructed_signal = reconstructor. reconstruct_zero_order_hold(t)
 
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
@@ -255,8 +243,39 @@ class MainWindow(QtWidgets.QMainWindow):
     # to stop mixer thread before exit the program        
     def closeEvent(self, event): 
         self.mixer.stop() 
-        event.accept()         
+        event.accept()  
+     
+    def add_noise(self, SNR): 
+        self.SNR = SNR
+        print("SNR: ", self.SNR)
+        # the original signal without noise
+        original_signal = self.signal.y_vec
+        
+        # how much is noise to the signal eq-> SNR = signal / noise        
+        noise_power = original_signal / self.SNR
+        
+        # White Gaussian noise (normal noise)
+        noise = noise_power * np.random.normal(size=original_signal.shape)
+        
+        # add noise to the signal
+        noisy_signal  = original_signal + noise
+        self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS)        
+        
+        # Clear any previous plots
+        self.ui.original_signal_graph.plotItem.clear() 
+        self.ui.reconstructed_signal_graph.plotItem.clear()
 
+        # Plot the noisy signal in the original graph
+        self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal , pen='w')
+
+        # Set the range for both plots to match the signal size
+        self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
+        self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal .min(), noisy_signal .max()))
+
+        # Sample and reconstruct signal after adding noise
+        self._resample()
+        self._reconstruct()
+        
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     ui = MainWindow()
