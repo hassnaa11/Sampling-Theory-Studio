@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1464</width>
-    <height>698</height>
+    <width>1242</width>
+    <height>823</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,8 +29,8 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="sizeConstraint">
        <enum>QLayout::SetNoConstraint</enum>
@@ -81,7 +81,7 @@ font: 20pt &quot;Microsoft PhagsPa&quot;;</string>
           </property>
          </widget>
         </item>
-        <item alignment="Qt::AlignLeft">
+        <item>
          <widget class="QWidget" name="top_task_bar_widget" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -118,33 +118,17 @@ font: italic 11pt &quot;Georgia&quot;;
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetNoConstraint</enum>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
-             <property name="leftMargin">
-              <number>15</number>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
              </property>
-             <property name="rightMargin">
-              <number>15</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>1200</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="open_file_button">
@@ -865,7 +849,7 @@ widget-shadow: 2px 2px 5px rgb(0, 0, 0);</string>
       </item>
      </layout>
     </item>
-    <item>
+    <item row="0" column="1">
      <widget class="QWidget" name="side_bar_widget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">

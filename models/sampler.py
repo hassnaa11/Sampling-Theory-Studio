@@ -18,5 +18,6 @@ class Sampler:
         #Sampling the signal
         x_sampled = np.arange(x_vec[0], x_vec[-1], 1/f_sampling)
         y_sampled = np.interp(x_sampled, x_vec, y_vec)
+        # print("x_sampled: ",x_sampled,"y_sampled: ", y_sampled)
         return signal(x_sampled, y_sampled, signal_type)
     
