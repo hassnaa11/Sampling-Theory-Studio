@@ -200,13 +200,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return  
 
         reconstructor = Reconstructor(self.sampled_signal)
-        
-        # Generate time points for reconstruction
-        if self.is_mixed_signal:
-            print("hey")
-            t = self.mixer.composed_x_data
-        else:    
-            t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
         
         method = self.ui.methods_comboBox.currentText()
 
@@ -220,6 +214,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reconstructed_signal = reconstructor.reconstruct_linear(t)
         elif method == "Cubic Spline":
             self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
+        elif method == "RBF interpolation":
+            self.reconstructed_signal = reconstructor.reconstruct_RBF(t)
 
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
