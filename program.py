@@ -335,21 +335,22 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         # Plot aliased components
-        self.after_band_width_line = frequency_graph.plot(
-            self.frequencies + self.sampling_frequency,
+        for i in range(1,10):
+            self.after_band_width_line = frequency_graph.plot(
+            self.frequencies + i * self.sampling_frequency,
             self.amplitude,
             pen=pg.mkPen(color="red"),
             name='After Sampling Frequency'
         )
-        self.before_band_width_line = frequency_graph.plot(
-            self.frequencies - self.sampling_frequency,
-            self.amplitude,
-            pen=pg.mkPen(color="red"),
-            name='Before Sampling Frequency'
+            self.before_band_width_line = frequency_graph.plot(
+                self.frequencies - i * self.sampling_frequency,
+                self.amplitude,
+                pen=pg.mkPen(color="red"),
+                name='Before Sampling Frequency'
         )
         # Set the range 
         frequency_graph.plotItem.getViewBox().setRange(
-            xRange=(-self.sampling_frequency, self.sampling_frequency),  
+            xRange=(-10 * self.sampling_frequency, 10 * self.sampling_frequency),  
             yRange=(0, self.amplitude.max() * 1.1) 
         )
         frequency_graph.showGrid(x=True, y=True, alpha=0.3)
