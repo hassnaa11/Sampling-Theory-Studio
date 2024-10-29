@@ -370,13 +370,36 @@ class MainWindow(QtWidgets.QMainWindow):
     def test_cases(self):
 
         test=self.ui.tests_comboBox.currentText()
-        # if test=="Test Case 1":
 
-        
-        if test=="Test Case 2":
+        if test == "Test":
+        # Optionally, clear the table or show a message indicating no test is selected
+            return
+        if test == "Test Case 1":
+            self.ui.tableWidget.setRowCount(0)  # Clear previous rows
+
+            # Amplitude Modulation Example with Carrier and Envelope:
+            # Row 0: Carrier Signal
+            self.ui.tableWidget.insertRow(0)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(15)))  # Frequency: 15 Hz (Carrier)
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))   # Amplitude: 1 (Carrier)
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
+            icon_item = QtWidgets.QTableWidgetItem()
+            self.ui.tableWidget.setItem(0, 3, icon_item)
+            icon_item.setIcon(self.mixer.remove_icon)
+            
+            # Row 1: Envelope Signal
+            self.ui.tableWidget.insertRow(1)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(0.5)))  # Frequency: 0.5 Hz (Envelope)
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(0.5)))  # Amplitude: 0.5 (Envelope)
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
+
+        elif test=="Test Case 2":
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
             self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude
             self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase
+            icon_item = QtWidgets.QTableWidgetItem()
+            self.ui.tableWidget.setItem(0, 3, icon_item)
+            icon_item.setIcon(self.mixer.remove_icon)
             # Check if the second row exists; if not, insert it
             if self.ui.tableWidget.rowCount() < 2:
                 self.ui.tableWidget.insertRow(1)
@@ -385,21 +408,59 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase
 
-        elif test=="Test Case 3":
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(5)))  # Frequency
-            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))  # Amplitude
-            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase
-            # Check if the second row exists; if not, insert it
-            if self.ui.tableWidget.rowCount() < 2:
-                self.ui.tableWidget.insertRow(1)
-            # Set values for the second row
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(5.5)))  # Frequency
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude
-            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(90)))  # Phase
+        elif test == "Test Case 3":
+            self.ui.tableWidget.setRowCount(0)  # Clear previous rows
+
+            # Phase Cancellation Example:
+            self.ui.tableWidget.insertRow(0)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(4)))  # Frequency: 4 Hz
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))  # Amplitude: 1
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase: 0
+            icon_item = QtWidgets.QTableWidgetItem()
+            self.ui.tableWidget.setItem(0, 3, icon_item)
+            icon_item.setIcon(self.mixer.remove_icon)
+
+            self.ui.tableWidget.insertRow(1)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency: 4 Hz
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 1
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(180)))  # Phase: 180 degrees (π)
+            
+
+        # elif test == "Test Case 3":
+        #     self.ui.tableWidget.setRowCount(0)  # Clear previous rows
+
+        #     # Square wave harmonic components for different sampling rates
+        #     sampling_cases = [
+        #         {"Frequency": 1, "Amplitude": 1, "Phase": 0},  # 1 Hz fundamental
+        #         {"Frequency": 3, "Amplitude": 1/3, "Phase": 0},  # 3rd harmonic
+        #         {"Frequency": 5, "Amplitude": 1/5, "Phase": 0},  # 5th harmonic
+        #         {"Frequency": 7, "Amplitude": 1/7, "Phase": 0},  # 7th harmonic
+        #         # Add more harmonics if necessary for the scenario
+        #     ]
+
+        #     # Example case for a 20 Hz sampling rate
+        #     for index, harmonic in enumerate(sampling_cases):
+        #         if self.ui.tableWidget.rowCount() <= index:
+        #             self.ui.tableWidget.insertRow(index)
+        #         self.ui.tableWidget.setItem(index, 0, QTableWidgetItem(str(harmonic["Frequency"])))  # Frequency
+        #         self.ui.tableWidget.setItem(index, 1, QTableWidgetItem(str(harmonic["Amplitude"])))  # Amplitude
+        #         self.ui.tableWidget.setItem(index, 2, QTableWidgetItem(str(harmonic["Phase"])))  # Phase
+
+        #     # Example demonstration messages (optional) to show the difference in reconstruction:
+        #     # At 20 Hz, capture several harmonics and reconstruct the square wave accurately.
+        #     # At 8 Hz, capture limited harmonics, missing details but retaining the basic shape.
+        #     # At 4 Hz, demonstrate the effects of aliasing causing severe distortion.
+
+        #     # If you want to automate more details, such as dynamically changing the sampling rate and plotting the waveforms, additional code may be needed.
+            
+        # # elif test=="Test Case 1":
+
              
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     ui = MainWindow()
     ui.show()
     app.exec_()        
+    
+
     
