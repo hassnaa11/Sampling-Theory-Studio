@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal,QTimer
 from PyQt5 import  QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 class Mixer(QThread):
@@ -10,12 +10,11 @@ class Mixer(QThread):
         self.signals_table = signals_table
         self.preview_graph = preview_graph
         self.signals_table.insertRow(self.signals_table.rowCount())
-        
         self.remove_icon = QtGui.QIcon()
         self.remove_icon.addPixmap(QtGui.QPixmap("images\icons8-remove-64.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.signals_table.cellClicked.connect(self.handleCellClick)
         
-        self.signals_table.setStyleSheet("text-align: center; color: white;")
+        # self.signals_table.setStyleSheet("color: white;")
         self.signals_data = {}
         self.running = False
         self.max_frequency = 0
@@ -98,7 +97,7 @@ class Mixer(QThread):
         self.running = True
         while self.running:
             self.getSignalInfo()
-            # print("runn")  
+            print("runn")  # don't remove this comment pls
     
     
     def stop(self):

@@ -600,26 +600,34 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
         self.tableWidget.setMinimumSize(QtCore.QSize(300, 0))
-        self.tableWidget.setStyleSheet("QTableWidget {\n"
-"    background-color: rgb(0, 0, 0);\n"
-"    background-color : back;\n"
-"    color: rgb(255, 255, 255);\n"
-"    border : none;\n"
-"    font-family: \"Arial\";\n"
-"    font-size : 14px;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item {\n"
-"borde-bottom: 1px solid gray;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item : selected {\n"
-"background-color : darckgray;\n"
-"}\n"
-"\n"
-"QHeaderView :: section{\n"
-"border : none\n"
-"}")
+        self.tableWidget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: rgb(0, 0, 0);\n"
+            "    color: rgb(255, 255, 255);\n"
+            "    border: none;\n"
+            "    font-family: \"Arial\";\n"
+            "    font-size: 14px;\n"
+            "}\n"
+            "\n"
+            "QTableWidget::item {\n"
+            "    border-bottom: 1px solid gray;\n"
+            "}\n"
+            "\n"
+            "QTableWidget::item:selected {\n"
+            "    background-color: rgb(0, 0, 0);\n"
+            "    color: rgb(255, 255, 255);\n"
+            "    border: 2px solid rgb(169, 222, 216);\n"
+            "}\n"
+            "\n"
+            "QHeaderView::section {\n"
+            "    border: none;\n"
+            "}\n"
+            "\n"
+            "QTableWidget::item:focus {\n"
+            "    color: rgb(255, 255, 255);\n"
+            "}")
+
+
         self.tableWidget.setObjectName("tableWidget")
         
         header = self.tableWidget.horizontalHeader()

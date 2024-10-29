@@ -143,7 +143,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.frequancy_domain_graph.plotItem.clear()
         self.ui.side_bar_widget.hide() 
         self.sidebar_visible = not self.sidebar_visible
-        # self.centralWidget().layout().update() 
+        self.centralWidget().layout().update() 
 
         if float(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
             print("plot composed signal in main graph")
@@ -254,14 +254,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.is_mixer_running and self.mixer.running == False:
             self.ui.side_bar_widget.show()
             self.sidebar_visible = not self.sidebar_visible
-            # self.centralWidget().layout().update() 
+            self.centralWidget().layout().update() 
             self.mixer.start()
 
         else:
             self.mixer.stop() 
             self.ui.side_bar_widget.hide() 
             self.sidebar_visible = not self.sidebar_visible
-            # self.centralWidget().layout().update() 
+            self.centralWidget().layout().update() 
 
     # to stop mixer thread before exit the program        
     def closeEvent(self, event): 
