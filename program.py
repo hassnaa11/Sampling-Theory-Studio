@@ -48,7 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.init_equal_space()
         self.ui.side_bar_widget.hide()
         self.freq_values = []
-        self.max_frequency = 150.0 #this will be calculated by the function 
+        self.max_frequency = 150 #this will be calculated by the function 
         self.sidebar_visible = False
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
@@ -108,6 +108,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
+            # print(f"self,max_frequency = {self.max_frequency}")
             self.ui.fs_horizontalSlider.setRange(1, 1000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
