@@ -12,6 +12,7 @@ from models.signal import signal, signalType
 from models.sampler import Sampler           
 from models.reconstruction import Reconstructor 
 import numpy as np
+from scipy.signal import butter, filtfilt
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -26,7 +27,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
         self.ui.snr_horizontalSlider.valueChanged.connect(self.set_SNR)
         self.ui.snr_horizontalSlider.setRange(1,50)
-        self.SNR = 0
+        self.SNR = 1
+        self.ui.snr_value_label.setText(f"{self.SNR} SNR")
         self.ui.noise_checkBox.setChecked(False)
         self.ui.noise_checkBox.clicked.connect(self.add_noise)
         self.is_mixed_signal = False
@@ -43,15 +45,17 @@ class MainWindow(QtWidgets.QMainWindow):
         print(f"sampling frequecy initial:{self.sampling_frequency}")
         self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
         self.update_slider_range()
+        self.init_equal_space()
+        self.ui.side_bar_widget.hide()
         self.freq_values = []
-        self.max_frequency = 150 #this will be calculated by the function 
+        self.max_frequency = 150.0 #this will be calculated by the function 
         self.sidebar_visible = False
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
         
         self.is_mixer_running = False
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
-        #self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
+        # self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
         self.ui.apply_button_2.clicked.connect(self.plot_composed_signal)
         self.ui.error_frequency_toggle_button.toggled.connect(self.handle_radio_button)
@@ -112,7 +116,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             print(f"max frequency in update slider{self.max_frequency}")
             self.freq_values = [1 * self.max_frequency, 2 * self.max_frequency, 3 * self.max_frequency, 4 * self.max_frequency]
-            self.ui.fs_horizontalSlider.setRange(1, len(self.freq_values) - 1)
+            self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(0)
             self.set_sampling_frequency(0)  
@@ -132,28 +136,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self._reconstruct()
 
     def plot_composed_signal(self):
+        print("i am in plot composed signal")
         self.mixer.stop()
         
         self.ui.original_signal_graph.plotItem.clear()  
         self.ui.reconstructed_signal_graph.plotItem.clear()
         self.ui.difference_signal_graph.plotItem.clear()
+        self.ui.frequancy_domain_graph.plotItem.clear()
+        self.ui.side_bar_widget.hide() 
+        self.sidebar_visible = not self.sidebar_visible
+        self.centralWidget().layout().update() 
 
-        if int(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
-            self.sampling_frequency = 2 * int(self.mixer.max_frequency)
-            self.max_frequency = int(self.mixer.max_frequency)
+        if float(self.mixer.max_frequency) != 0 and np.any(self.mixer.composed_x_data != 0) and np.any(self.mixer.composed_y_data != 0):
+            self.sampling_frequency = 2 * float(self.mixer.max_frequency)
+            self.max_frequency = float(self.mixer.max_frequency)
             
             x = self.mixer.composed_x_data
             y = self.mixer.composed_y_data  
 
-            print(f"composed x values:{len(self.mixer.composed_x_data)}")  
-            print(f"composed y values:{len(self.mixer.composed_y_data)}")  
-
             # Initialize the signal
             self.signal = signal(x, y, signalType.CONTINUOUS)
-
-            # Clear any previous plots
-            self.ui.original_signal_graph.plotItem.clear() 
-            self.ui.reconstructed_signal_graph.plotItem.clear()
 
             # Plot the original signal
             self.ui.original_signal_graph.plot(x, y, pen='w')
@@ -170,12 +172,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.original_signal_graph.plotItem.clear()  
             self.ui.reconstructed_signal_graph.plotItem.clear() 
             self.ui.difference_signal_graph.plotItem.clear()
+            self.ui.frequancy_domain_graph.plotItem.clear()
 
     def _resample(self):
         if(self.ui.noise_checkBox.isChecked()):
             sampler = Sampler(self.noisy_signal)
         else:
             sampler = Sampler(self.signal)    
+
         self.sampled_signal = sampler.sample(self.sampling_frequency)
 
         # Clear previous sampling plot 
@@ -209,6 +213,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reconstructed_signal = reconstructor.reconstruct_linear(t)
         elif method == "Cubic Spline":
             self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
+        elif method == "RBF interpolation":
+            self.reconstructed_signal = reconstructor.reconstruct_RBF(t)
 
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
@@ -223,6 +229,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Plot the difference signal
         self._calculate_difference()
+        self.create_frequency_domain(self.ui.frequancy_domain_graph)
 
     def _calculate_difference(self):
         if not self.signal or not self.reconstructed_signal:
@@ -248,9 +255,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.mixer.start()
+            self.ui.side_bar_widget.show()
+            self.sidebar_visible = not self.sidebar_visible
+            self.centralWidget().layout().update() 
+
         else:
-            self.mixer.stop()  
-            
+            self.mixer.stop() 
+
     # to stop mixer thread before exit the program        
     def closeEvent(self, event): 
         self.mixer.stop() 
@@ -265,6 +276,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def add_noise(self): 
         if self.signal:
+            
             # the original signal without noise
             original_signal = self.signal.y_vec
             
@@ -276,9 +288,8 @@ class MainWindow(QtWidgets.QMainWindow):
             
             # add noise to the signal
             noisy_signal  = original_signal + noise
-            self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS)        
-            
-            # Clear any previous plots
+            self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS) 
+
             self.ui.original_signal_graph.plotItem.clear() 
             self.ui.reconstructed_signal_graph.plotItem.clear()
 
@@ -301,27 +312,66 @@ class MainWindow(QtWidgets.QMainWindow):
             self._resample()
             self._reconstruct()      
 
-    def toggle_sidebar(self):
-        if self.sidebar_visible:
-            self.ui.side_bar_widget.hide()  
-        else:
-            self.ui.side_bar_widget.show()  
+    def create_frequency_domain(self, frequency_graph):
+        
+        if not self.signal or not self.reconstructed_signal:
+            return
 
-        # Update visibility state
-        self.sidebar_visible = not self.sidebar_visible
-        self.centralWidget().layout().update() 
+        self.ui.frequancy_domain_graph.clear()
+
+        N = len(self.signal.y_vec)
+        dt = self.signal.x_vec[1] - self.signal.x_vec[0] 
+        self.frequencies = np.fft.fftfreq(N, d=dt)  
+        self.amplitude = np.abs(np.fft.fft(self.signal.y_vec)) / N  
+
+
+        # Plot original signal
+        self.frequency_line = frequency_graph.plot(
+            self.frequencies,
+            self.amplitude,
+            pen=pg.mkPen(color="yellow", width=2.5),
+            name='Original Signal'
+        )
+
+        # Plot aliased components
+        self.after_band_width_line = frequency_graph.plot(
+            self.frequencies + self.sampling_frequency,
+            self.amplitude,
+            pen=pg.mkPen(color="red"),
+            name='After Sampling Frequency'
+        )
+        self.before_band_width_line = frequency_graph.plot(
+            self.frequencies - self.sampling_frequency,
+            self.amplitude,
+            pen=pg.mkPen(color="red"),
+            name='Before Sampling Frequency'
+        )
+        # Set the range 
+        frequency_graph.plotItem.getViewBox().setRange(
+            xRange=(-self.sampling_frequency, self.sampling_frequency),  
+            yRange=(0, self.amplitude.max() * 1.1) 
+        )
+        frequency_graph.showGrid(x=True, y=True, alpha=0.3)
+
 
     def handle_radio_button(self, checked):
         if checked:
             self.ui.error_frequency_toggle_button.setText("Show Error Difference")
-            self.ui.stackedWidget.setCurrentIndex(1)  # Error Difference page
+            self.ui.stackedWidget.setCurrentIndex(1)  # Frequency Domain page
         else:
             self.ui.error_frequency_toggle_button.setText("Show Frequency Domain")
-            self.ui.stackedWidget.setCurrentIndex(0)  # Frequency Domain page
+            self.ui.stackedWidget.setCurrentIndex(0)  # Error Difference page
 
+    def init_equal_space(self):
+        self.centralWidget().layout().setStretch(0, 1)  # Left part
+        self.centralWidget().layout().setStretch(1, 1)  # Sidebar
 
     def test_cases(self):
+
         test=self.ui.tests_comboBox.currentText()
+        # if test=="Test Case 1":
+
+        
         if test=="Test Case 2":
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
             self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude
@@ -333,13 +383,18 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency
             self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase
-            
 
-        # elif test=="Test Case 1":
-             
-        # elif test=="Test Case 1":
-             
-
+        elif test=="Test Case 3":
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(5)))  # Frequency
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))  # Amplitude
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase
+            # Check if the second row exists; if not, insert it
+            if self.ui.tableWidget.rowCount() < 2:
+                self.ui.tableWidget.insertRow(1)
+            # Set values for the second row
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(5.5)))  # Frequency
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(90)))  # Phase
              
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])

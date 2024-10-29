@@ -55,7 +55,6 @@ class Mixer(QThread):
             icon_item.setIcon(self.remove_icon)
             self.signals_table.insertRow(self.signals_table.rowCount())
             
-    
     def plotMixedSignals(self):
         print("plot mixed signals")
         self.preview_graph.clear()
