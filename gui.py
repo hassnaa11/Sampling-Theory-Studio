@@ -302,7 +302,9 @@ class Ui_MainWindow(object):
                 "    border-radius: 10px;\n"
                 "}")
         self.tests_comboBox.setObjectName("tests_comboBox")
-        self.tests_comboBox.addItem("")
+        self.tests_comboBox.addItem("Test Case 1")
+        self.tests_comboBox.addItem("Test Case 2")
+        self.tests_comboBox.addItem("Test Case 3")
         self.horizontalLayout_8.addWidget(self.tests_comboBox)
         self.verticalLayout_2.addLayout(self.horizontalLayout_8)
         spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
@@ -527,7 +529,6 @@ class Ui_MainWindow(object):
         self.open_file_button.setWhatsThis(_translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">)pen</span></p></body></html>"))
         self.open_file_button.setText(_translate("MainWindow", "Open File"))
         self.mixer_label.setText(_translate("MainWindow", "Mixer"))
-        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Tests"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "frequancy"))
         item = self.tableWidget.horizontalHeaderItem(1)

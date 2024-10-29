@@ -28,8 +28,11 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
+        # self.centralwidget.layout().setStretch(0, 1)  # First widget
+        # self.centralwidget.layout().setStretch(1, 1)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
+        
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
@@ -137,6 +140,7 @@ class Ui_MainWindow(object):
         self.original_signal_graph.setTabletTracking(True)
         self.original_signal_graph.setAcceptDrops(True)
         self.original_signal_graph.setAutoFillBackground(False)
+        # self.original_signal_graph.setBackground((27, 27, 27))
         self.original_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
@@ -153,6 +157,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.actual_radioButton.sizePolicy().hasHeightForWidth())
         self.actual_radioButton.setSizePolicy(sizePolicy)
+        self.actual_radioButton.setAutoExclusive(True)
         self.actual_radioButton.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
@@ -164,11 +169,20 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.normalized_radioButton.sizePolicy().hasHeightForWidth())
         self.normalized_radioButton.setSizePolicy(sizePolicy)
+        self.normalized_radioButton.setAutoExclusive(True)
         self.normalized_radioButton.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
         self.normalized_radioButton.setObjectName("normalized_radioButton")
         self.horizontalLayout_5.addWidget(self.normalized_radioButton)
+        
+        self.noise_checkBox = QtWidgets.QCheckBox(self.centralwidget)
+        self.noise_checkBox.setStyleSheet("color: rgb(255, 255, 255);\n"
+"font: italic 10pt \"Georgia\";\n"
+"margin-right: 10px;")
+        self.noise_checkBox.setObjectName("noise_checkBox")
+        self.horizontalLayout_5.addWidget(self.noise_checkBox)
+        
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
@@ -396,12 +410,11 @@ class Ui_MainWindow(object):
         self.reconstructed_signal_graph.setTabletTracking(True)
         self.reconstructed_signal_graph.setAcceptDrops(True)
         self.reconstructed_signal_graph.setAutoFillBackground(False)
+        # self.reconstructed_signal_graph.setBackground((27, 27, 27))
         self.reconstructed_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
-"button-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"widget-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
-"padding-right: 5px;\n"
-"padding-left: 5px;")
+"buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+"widget-shadow: 2px 2px 5px rgb(0, 0, 0);")
         self.reconstructed_signal_graph.setObjectName("reconstructed_signal_graph")
         self.verticalLayout_2.addWidget(self.reconstructed_signal_graph)
 
@@ -410,6 +423,7 @@ class Ui_MainWindow(object):
         self.error_frequency_toggle_button.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
+        self.error_frequency_toggle_button.setAutoExclusive(False)
         self.error_frequency_toggle_button.setObjectName("error_frequency_toggle_button")
         self.verticalLayout_2.addWidget(self.error_frequency_toggle_button)
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
@@ -458,6 +472,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.difference_signal_graph.sizePolicy().hasHeightForWidth())
         self.difference_signal_graph.setSizePolicy(sizePolicy)
         self.difference_signal_graph.setMinimumSize(QtCore.QSize(0, 110))
+        # self.difference_signal_graph.setBackground((27,27,27))
         self.difference_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
@@ -478,7 +493,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frequancy_domain_label.sizePolicy().hasHeightForWidth())
         self.frequancy_domain_label.setSizePolicy(sizePolicy)
-        self.frequancy_domain_label.setMinimumSize(QtCore.QSize(0, 30))
+        # self.frequancy_domain_label.setMinimumSize(QtCore.QSize(0, 30))
         self.frequancy_domain_label.setStyleSheet("color: rgb(255, 255, 255);\n"
 "font: italic 10pt \"Georgia\";\n"
 "")
@@ -494,8 +509,11 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frequancy_domain_graph.sizePolicy().hasHeightForWidth())
         self.frequancy_domain_graph.setSizePolicy(sizePolicy)
-        self.frequancy_domain_graph.setMinimumSize(QtCore.QSize(0, 120))
-        self.frequancy_domain_graph.setBaseSize(QtCore.QSize(1100, 110))
+        # self.frequancy_domain_graph.setMinimumSize(QtCore.QSize(0, 120))
+        # self.frequancy_domain_graph.setBaseSize(QtCore.QSize(1100, 110))
+        # self.frequancy_domain_graph.setBackground((27,27,27))
+        self.frequancy_domain_graph.setMinimumSize(QtCore.QSize(0, 110))
+        # self.frequancy_domain_graph.setBaseSize(QtCore.QSize(1100, 110))
         self.frequancy_domain_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
@@ -512,8 +530,8 @@ class Ui_MainWindow(object):
         ########### side bar ###########
 
         self.side_bar_widget = QtWidgets.QWidget(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.side_bar_widget.sizePolicy().hasHeightForWidth())
         self.side_bar_widget.setSizePolicy(sizePolicy)
@@ -576,8 +594,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.tests_comboBox)
         self.verticalLayout_6.addLayout(self.horizontalLayout_8)
         self.tableWidget = QtWidgets.QTableWidget(self.side_bar_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
@@ -607,6 +625,10 @@ class Ui_MainWindow(object):
         """)
 
         self.tableWidget.setObjectName("tableWidget")
+        
+        header = self.tableWidget.horizontalHeader()
+        header.setSectionResizeMode(self.tableWidget.horizontalHeader().Stretch)  # Columns stretch equally
+        # header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
@@ -662,7 +684,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9.addLayout(self.horizontalLayout_19)
         self.apply_button_2 = QtWidgets.QPushButton(self.side_bar_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(90)
+        sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.apply_button_2.sizePolicy().hasHeightForWidth())
         self.apply_button_2.setSizePolicy(sizePolicy)
@@ -673,6 +695,21 @@ class Ui_MainWindow(object):
 "border-radius: 10px;")
         self.apply_button_2.setObjectName("apply_button_2")
         self.horizontalLayout_9.addWidget(self.apply_button_2)
+
+#         self.mix_signals_button = QtWidgets.QPushButton(self.side_bar_widget)
+#         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+#         sizePolicy.setHorizontalStretch(0)
+#         sizePolicy.setVerticalStretch(0)
+#         sizePolicy.setHeightForWidth(self.mix_signals_button.sizePolicy().hasHeightForWidth())
+#         self.mix_signals_button.setSizePolicy(sizePolicy)
+#         self.mix_signals_button.setMinimumSize(QtCore.QSize(80, 30))
+#         self.mix_signals_button.setStyleSheet("font: italic 10pt \"Georgia\";\n"
+# "background-color: rgb(169, 222, 216);\n"
+# "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+# "border-radius: 10px;")
+#         self.mix_signals_button.setObjectName("mix_signals_button")
+#         self.horizontalLayout_9.addWidget(self.mix_signals_button)
+
         self.horizontalLayout_18 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -704,23 +741,28 @@ class Ui_MainWindow(object):
         self.mixer_button.setText(_translate("MainWindow", "Mixer"))
         self.actual_radioButton.setText(_translate("MainWindow", "Actual"))
         self.normalized_radioButton.setText(_translate("MainWindow", "Normalized"))
+        self.noise_checkBox.setText(_translate("MainWindow", "Noise"))
         self.fs_label.setText(_translate("MainWindow", "FS"))
         self.fs_value_label.setText(_translate("MainWindow", "FS: "))
-        # self.methods_comboBox.setItemText(0, _translate("MainWindow", "Method"))
-        # self.methods_comboBox.setItemText(1, _translate("MainWindow", "Method1"))
-        # self.methods_comboBox.setItemText(2, _translate("MainWindow", "Method2"))
-        # self.methods_comboBox.setItemText(3, _translate("MainWindow", "Method3"))
+
+        ###### reconstruction method combobox #######
+        self.methods_comboBox.setItemText(0, _translate("MainWindow", "Linear"))
+        self.methods_comboBox.setItemText(1, _translate("MainWindow", "whittaker_shannon"))
+        self.methods_comboBox.setItemText(2, _translate("MainWindow", "Cubic Spline"))
+        self.methods_comboBox.setItemText(3, _translate("MainWindow", "nearest_neighbor"))
+        self.methods_comboBox.setItemText(4, _translate("MainWindow", "Zero-Order Hold"))
+        self.methods_comboBox.setItemText(5, _translate("MainWindow", "RBF interpolation"))
         self.snr_label.setText(_translate("MainWindow", "SNR"))
         self.snr_value_label.setText(_translate("MainWindow", "SNR: "))
         self.reconstructed_signal_label.setText(_translate("MainWindow", "Reconstructed Signal"))
-        self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Error Difference"))
+        self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Frequency Domain"))
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
         self.frequancy_domain_label.setText(_translate("MainWindow", "Frequency Domain"))
         self.mixer_label.setText(_translate("MainWindow", "Mixer"))
-        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Tests"))
-        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Testcase1"))
-        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Testcase2"))
-        self.tests_comboBox.setItemText(3, _translate("MainWindow", "Testcase3"))
+        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test"))
+        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Test Case 1"))
+        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Test Case 2"))
+        self.tests_comboBox.setItemText(3, _translate("MainWindow", "Test Case 3"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "frequency"))
         item = self.tableWidget.horizontalHeaderItem(1)
@@ -729,3 +771,4 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "phase"))
         self.mixed_signal_label.setText(_translate("MainWindow", "Mixed Signal"))
         self.apply_button_2.setText(_translate("MainWindow", "Apply"))
+        # self.mix_signals_button.setText(_translate("MainWindow", "Add"))
