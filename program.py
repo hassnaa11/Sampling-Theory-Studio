@@ -195,13 +195,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return  
 
         reconstructor = Reconstructor(self.sampled_signal)
-        
-        # Generate time points for reconstruction
-        if self.is_mixed_signal:
-            print("hey")
-            t = self.mixer.composed_x_data
-        else:    
-            t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
+        t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
         
         method = self.ui.methods_comboBox.currentText()
 
