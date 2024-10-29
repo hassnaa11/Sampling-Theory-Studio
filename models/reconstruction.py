@@ -9,7 +9,7 @@ class Reconstructor:
 
     def reconstruct_shannon(self, t: np.ndarray, sampling_frequency):
         # print("t = ", t)
-        print("sampling freq = ", sampling_frequency)
+        # print("sampling freq = ", sampling_frequency)
         x_vec = self.sampled_signal.x_vec
         y_vec = self.sampled_signal.y_vec
 
@@ -19,7 +19,7 @@ class Reconstructor:
         for i, t_val in enumerate(t):
             y_interp[i] = np.sum(y_vec * np.sinc((x_vec - t_val) * sampling_frequency))
         
-        print("y_interp = ", y_interp)
+        # print("y_interp = ", y_interp)
         print("len(y_interp) = ", len(y_interp))
         return signal(np.array(t), np.array(y_interp), signalType.CONTINUOUS)
 
@@ -57,6 +57,7 @@ class Reconstructor:
             idx = np.argmin(np.abs(x_vec - t[i]))
             y_interp[i] = y_vec[idx]
         return signal(np.array(t), np.array(y_interp), signalType.CONTINUOUS)
+        
     def reconstruct_RBF(self, t: np.ndarray, degree=3):
         x_vec = self.sampled_signal.x_vec.reshape(-1, 1)  # Reshape for RBF
         y_vec = self.sampled_signal.y_vec

@@ -40,7 +40,7 @@ class Mixer(QThread):
 
                 if float(self.signals_table.item(row, 0).text()) > float(self.max_frequency):
                     self.max_frequency = self.signals_table.item(row, 0).text()
-                    print("max frequency: ", self.max_frequency)
+                    # print("max frequency: ", self.max_frequency)
                 
         if not(self.signals_data == signals_data):
             print("will emit")
@@ -55,11 +55,10 @@ class Mixer(QThread):
             icon_item.setIcon(self.remove_icon)
             self.signals_table.insertRow(self.signals_table.rowCount())
             
-    
     def plotMixedSignals(self):
         print("plot mixed signals")
         self.preview_graph.clear()
-        self.composed_x_data = np.linspace(0, 2,1000)
+        self.composed_x_data = np.linspace(0, 2, 1000)
         self.composed_y_data = 0
         # y = A*sin(2πfx + ϕ)
         for signal in self.signals_data.values():
