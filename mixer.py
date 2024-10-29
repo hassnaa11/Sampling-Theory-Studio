@@ -1,6 +1,7 @@
 import numpy as np
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5 import  QtGui, QtWidgets
+from PyQt5.QtCore import Qt
 class Mixer(QThread):
     update_data_signal = pyqtSignal(dict)
 
@@ -14,7 +15,7 @@ class Mixer(QThread):
         self.remove_icon.addPixmap(QtGui.QPixmap("images\icons8-remove-64.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.signals_table.cellClicked.connect(self.handleCellClick)
         
-        self.signals_table.setStyleSheet("color: white")
+        self.signals_table.setStyleSheet("text-align: center; color: white;")
         self.signals_data = {}
         self.running = False
         self.max_frequency = 0
@@ -31,6 +32,11 @@ class Mixer(QThread):
         for row in range(row_count):
             # print(row)
             if self.signals_table.item(row, 0) and self.signals_table.item(row, 1) and self.signals_table.item(row, 2):
+                # Align text in center
+                self.signals_table.item(row, 0).setTextAlignment(Qt.AlignCenter)
+                self.signals_table.item(row, 1).setTextAlignment(Qt.AlignCenter)
+                self.signals_table.item(row, 2).setTextAlignment(Qt.AlignCenter)
+                
                 signals_data[row] = {
                     'Frequency': self.signals_table.item(row, 0).text(),
                     'Amplitude': self.signals_table.item(row, 1).text(),
@@ -46,14 +52,14 @@ class Mixer(QThread):
             print("will emit")
             self.signals_data = signals_data
             self.update_data_signal.emit(signals_data) 
-
                             
-        # check if all rows have data then add new row and emit data 
+        # check if all rows have data then add new row  
         if rows == row_count: 
             icon_item = QtWidgets.QTableWidgetItem()
             self.signals_table.setItem(rows - 1, 3, icon_item)
             icon_item.setIcon(self.remove_icon)
             self.signals_table.insertRow(self.signals_table.rowCount())
+            
             
     def plotMixedSignals(self):
         print("plot mixed signals")
@@ -67,24 +73,33 @@ class Mixer(QThread):
         if np.any(self.composed_y_data != 0):
             self.preview_graph.plot( self.composed_x_data, self.composed_y_data, pen="w")
     
+    
     def update_data(self, data):
         print("update data")
         self.signals_data = data 
         # print(self.signals_data)
         self.plotMixedSignals()
+      
         
     def handleCellClick(self, row, col):
+        self.running = False
+        print("stop for click")
         if col == 3:
             if row in self.signals_data:
                 del self.signals_data[row]
                 self.signals_table.removeRow(row)
                 self.plotMixedSignals()
-    
+        self.running = True 
+        self.start() 
+        print("run after click")      
+      
+        
     def run(self):
         self.running = True
         while self.running:
             self.getSignalInfo()
             # print("runn")  
+    
     
     def stop(self):
         print("stop")
