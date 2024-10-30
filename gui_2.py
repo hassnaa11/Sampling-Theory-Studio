@@ -600,26 +600,34 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
         self.tableWidget.setMinimumSize(QtCore.QSize(300, 0))
-        self.tableWidget.setStyleSheet("QTableWidget {\n"
-"    background-color: rgb(0, 0, 0);\n"
-"    background-color : back;\n"
-"    color: rgb(255, 255, 255);\n"
-"    border : none;\n"
-"    font-family: \"Arial\";\n"
-"    font-size : 14px;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item {\n"
-"borde-bottom: 1px solid gray;\n"
-"}\n"
-"\n"
-"QTabelWidget :: item : selected {\n"
-"background-color : darckgray;\n"
-"}\n"
-"\n"
-"QHeaderView :: section{\n"
-"border : none\n"
-"}")
+        self.tableWidget.setStyleSheet(
+            "QTableWidget {\n"
+            "    background-color: rgb(0, 0, 0);\n"
+            "    color: rgb(255, 255, 255);\n"
+            "    border: none;\n"
+            "    font-family: \"Arial\";\n"
+            "    font-size: 14px;\n"
+            "}\n"
+            "\n"
+            "QTableWidget::item {\n"
+            "    border-bottom: 1px solid gray;\n"
+            "}\n"
+            "\n"
+            "QTableWidget::item:selected {\n"
+            "    background-color: rgb(0, 0, 0);\n"
+            "    color: rgb(255, 255, 255);\n"
+            "    border: 2px solid rgb(169, 222, 216);\n"
+            "}\n"
+            "\n"
+            "QHeaderView::section {\n"
+            "    border: none;\n"
+            "}\n"
+            "\n"
+            "QTableWidget::item:focus {\n"
+            "    color: rgb(255, 255, 255);\n"
+            "}")
+
+
         self.tableWidget.setObjectName("tableWidget")
         
         header = self.tableWidget.horizontalHeader()
@@ -755,9 +763,10 @@ class Ui_MainWindow(object):
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
         self.frequancy_domain_label.setText(_translate("MainWindow", "Frequency Domain"))
         self.mixer_label.setText(_translate("MainWindow", "Mixer"))
-        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test Case 1"))
-        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Test Case 2"))
-        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Test Case 3"))
+        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test"))
+        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Test Case 1"))
+        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Test Case 2"))
+        self.tests_comboBox.setItemText(3, _translate("MainWindow", "Test Case 3"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "frequency"))
         item = self.tableWidget.horizontalHeaderItem(1)
