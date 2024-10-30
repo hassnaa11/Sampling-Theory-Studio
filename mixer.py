@@ -2,6 +2,7 @@ import numpy as np
 from PyQt5.QtCore import QThread, pyqtSignal,QTimer
 from PyQt5 import  QtGui, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QColor
 class Mixer(QThread):
     update_data_signal = pyqtSignal(dict)
 
@@ -13,8 +14,30 @@ class Mixer(QThread):
         self.remove_icon = QtGui.QIcon()
         self.remove_icon.addPixmap(QtGui.QPixmap("images\icons8-remove-64.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.signals_table.cellClicked.connect(self.handleCellClick)
-        
-        # self.signals_table.setStyleSheet("color: white;")
+
+        # self.signals_table.setStyleSheet("background-color: black; color: white;")
+        # self.signals_table.setStyleSheet("""
+        #     QTableWidget {
+        #         background-color: black;
+        #         color: white;
+        #     }
+        #     QTableWidget::item {
+        #         background-color: black;
+        #         color: white;
+        #     }
+        #     QTableWidget::item:selected {
+        #         background-color: black;
+        #         color: white;
+        #         QTableWidget::item {
+        #         background-color: black;
+        #         color: white;
+        #     }                         
+        #     }
+        # """)
+        font = QFont("Arial", 10)
+        self.signals_table.setFont(font)
+        self.signals_table.itemChanged.connect(self.update_item)
+
         self.signals_data = {}
         self.running = False
         self.max_frequency = 0
@@ -22,7 +45,10 @@ class Mixer(QThread):
         self.composed_y_data = 0
         self.update_data_signal.connect(self.update_data)
         
-        
+    def update_item(self, item):
+        # Set item alignment to center after each edit
+        item.setTextAlignment(Qt.AlignCenter)
+     
     def getSignalInfo(self):
         signals_data = {}
         row_count = self.signals_table.rowCount()
