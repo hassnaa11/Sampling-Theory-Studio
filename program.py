@@ -47,7 +47,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.init_equal_space()
         self.ui.side_bar_widget.hide()
         self.freq_values = []
-        self.max_frequency = 150.0 #this will be calculated by the function 
+        self.max_frequency = 150 #this will be calculated by the function 
         self.sidebar_visible = False
         self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
         self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
@@ -105,6 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
+            # print(f"self,max_frequency = {self.max_frequency}")
             self.ui.fs_horizontalSlider.setRange(1, 1000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
@@ -335,21 +336,22 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         # Plot aliased components
-        self.after_band_width_line = frequency_graph.plot(
-            self.frequencies + self.sampling_frequency,
+        for i in range(1,10):
+            self.after_band_width_line = frequency_graph.plot(
+            self.frequencies + i * self.sampling_frequency,
             self.amplitude,
             pen=pg.mkPen(color="red"),
             name='After Sampling Frequency'
         )
-        self.before_band_width_line = frequency_graph.plot(
-            self.frequencies - self.sampling_frequency,
-            self.amplitude,
-            pen=pg.mkPen(color="red"),
-            name='Before Sampling Frequency'
+            self.before_band_width_line = frequency_graph.plot(
+                self.frequencies - i * self.sampling_frequency,
+                self.amplitude,
+                pen=pg.mkPen(color="red"),
+                name='Before Sampling Frequency'
         )
         # Set the range 
         frequency_graph.plotItem.getViewBox().setRange(
-            xRange=(-self.sampling_frequency, self.sampling_frequency),  
+            xRange=(-10 * self.sampling_frequency, 10 * self.sampling_frequency),  
             yRange=(0, self.amplitude.max() * 1.1) 
         )
         frequency_graph.showGrid(x=True, y=True, alpha=0.3)
