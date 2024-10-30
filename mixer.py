@@ -15,7 +15,7 @@ class Mixer(QThread):
         self.remove_icon.addPixmap(QtGui.QPixmap("images\icons8-remove-64.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.signals_table.cellClicked.connect(self.handleCellClick)
 
-        # self.signals_table.setStyleSheet("background-color: black; color: white;")
+        self.signals_table.setStyleSheet("background-color: black; color: white;")
         # self.signals_table.setStyleSheet("""
         #     QTableWidget {
         #         background-color: black;

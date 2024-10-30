@@ -321,10 +321,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.frequancy_domain_graph.clear()
 
-        N = len(self.signal.y_vec)
-        dt = self.signal.x_vec[1] - self.signal.x_vec[0] 
+        N = len(self.reconstructed_signal.y_vec)
+        dt = self.reconstructed_signal.x_vec[1] - self.reconstructed_signal.x_vec[0] 
         self.frequencies = np.fft.fftfreq(N, d=dt)  
-        self.amplitude = np.abs(np.fft.fft(self.signal.y_vec)) / N  
+        self.amplitude = np.abs(np.fft.fft(self.reconstructed_signal.y_vec)) / N  
 
 
         # Plot original signal
@@ -351,7 +351,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         # Set the range 
         frequency_graph.plotItem.getViewBox().setRange(
-            xRange=(-10 * self.sampling_frequency, 10 * self.sampling_frequency),  
+            xRange=(-self.sampling_frequency, self.sampling_frequency),  
             yRange=(0, self.amplitude.max() * 1.1) 
         )
         frequency_graph.showGrid(x=True, y=True, alpha=0.3)
@@ -382,7 +382,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # Amplitude Modulation Example with Carrier and Envelope:
             # Row 0: Carrier Signal
             self.ui.tableWidget.insertRow(0)
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(15)))  # Frequency: 15 Hz (Carrier)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(10)))  # Frequency: 15 Hz (Carrier)
             self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))   # Amplitude: 1 (Carrier)
             self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
             icon_item = QtWidgets.QTableWidgetItem()
@@ -391,8 +391,8 @@ class MainWindow(QtWidgets.QMainWindow):
             
             # Row 1: Envelope Signal
             self.ui.tableWidget.insertRow(1)
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(0.5)))  # Frequency: 0.5 Hz (Envelope)
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(0.5)))  # Amplitude: 0.5 (Envelope)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(5)))  # Frequency: 0.5 Hz (Envelope)
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 0.5 (Envelope)
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
 
         elif test=="Test Case 2":
@@ -415,18 +415,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # Phase Cancellation Example:
             self.ui.tableWidget.insertRow(0)
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(4)))  # Frequency: 4 Hz
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(5)))  # Frequency: 4 Hz
             self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))  # Amplitude: 1
-            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase: 0
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(90)))  # Phase: 0
             icon_item = QtWidgets.QTableWidgetItem()
             self.ui.tableWidget.setItem(0, 3, icon_item)
             icon_item.setIcon(self.mixer.remove_icon)
 
             self.ui.tableWidget.insertRow(1)
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency: 4 Hz
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 1
-            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(180)))  # Phase: 180 degrees (π)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(5)))  # Frequency: 4 Hz
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(0.5)))  # Amplitude: 1
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase: 180 degrees (π)
             
+
 
         # elif test == "Test Case 3":
         #     self.ui.tableWidget.setRowCount(0)  # Clear previous rows
