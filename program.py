@@ -31,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.snr_value_label.setText(f"{self.SNR} SNR")
         self.ui.noise_checkBox.setChecked(False)
         self.ui.noise_checkBox.clicked.connect(self.add_noise)
+        self.ui.snr_horizontalSlider.setEnabled(False)
         
         # Set initial properties
         self.signal = None
@@ -91,6 +92,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
             self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
 
+            if(self.ui.noise_checkBox.isChecked()):
+                self.add_noise()
             # Sample and reconstruct signal after loading
             self._resample()
             self._reconstruct()
@@ -150,7 +153,7 @@ class MainWindow(QtWidgets.QMainWindow):
             print("plot composed signal in main graph")
             self.sampling_frequency = 2 * float(self.mixer.max_frequency)
             self.max_frequency = float(self.mixer.max_frequency)
-            
+                
             x = self.mixer.composed_x_data
             y = self.mixer.composed_y_data  
 
@@ -164,6 +167,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
             self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(x.min(), x.max()), yRange=(y.min(), y.max()))
 
+            if(self.ui.noise_checkBox.isChecked()):
+                self.add_noise()
             # Sample and reconstruct signal after loading
             self._resample() 
             self._reconstruct()
@@ -272,7 +277,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_SNR(self, value):
         if self.signal:
             self.SNR = value 
-            self.ui.snr_value_label.setText(f"{self.SNR} SNR")
+            if(self.ui.noise_checkBox.isChecked()):
+                self.ui.snr_value_label.setText(f"{self.SNR} SNR")
             print("SNR: ", self.SNR)
             self.add_noise()
 
@@ -296,6 +302,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.reconstructed_signal_graph.plotItem.clear()
 
             if(self.ui.noise_checkBox.isChecked()):
+                self.ui.snr_horizontalSlider.setEnabled(True)
                 # Plot the noisy signal in the original graph
                 self.ui.original_signal_graph.plot(self.signal.x_vec, noisy_signal , pen='w')
 
@@ -303,6 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.original_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
                 self.ui.reconstructed_signal_graph.plotItem.getViewBox().setRange(xRange=(self.signal.x_vec.min(), self.signal.x_vec.max()), yRange=(noisy_signal.min(), noisy_signal.max()))
             else:  
+                self.ui.snr_horizontalSlider.setEnabled(False)
                 # Plot the original signal in the original graph
                 self.ui.original_signal_graph.plot(self.signal.x_vec, self.signal.y_vec , pen='w')
 
@@ -382,8 +390,8 @@ class MainWindow(QtWidgets.QMainWindow):
             # Amplitude Modulation Example with Carrier and Envelope:
             # Row 0: Carrier Signal
             self.ui.tableWidget.insertRow(0)
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(10)))  # Frequency: 15 Hz (Carrier)
-            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))   # Amplitude: 1 (Carrier)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(1)))  # Frequency: 15 Hz (Carrier)
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1.27388)))   # Amplitude: 1 (Carrier)
             self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
             icon_item = QtWidgets.QTableWidgetItem()
             self.ui.tableWidget.setItem(0, 3, icon_item)
@@ -391,9 +399,27 @@ class MainWindow(QtWidgets.QMainWindow):
             
             # Row 1: Envelope Signal
             self.ui.tableWidget.insertRow(1)
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(5)))  # Frequency: 0.5 Hz (Envelope)
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 0.5 (Envelope)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(3)))  # Frequency: 0.5 Hz (Envelope)
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(-0.424628)))  # Amplitude: 0.5 (Envelope)
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
+            icon_item = QtWidgets.QTableWidgetItem()
+            self.ui.tableWidget.setItem(1, 3, icon_item)
+            icon_item.setIcon(self.mixer.remove_icon)
+            
+            # Row 2:
+            self.ui.tableWidget.insertRow(2)
+            self.ui.tableWidget.setItem(2, 0, QTableWidgetItem(str(5)))  # Frequency: 15 Hz (Carrier)
+            self.ui.tableWidget.setItem(2, 1, QTableWidgetItem(str(0.254777)))   # Amplitude: 1 (Carrier)
+            self.ui.tableWidget.setItem(2, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
+            icon_item = QtWidgets.QTableWidgetItem()
+            self.ui.tableWidget.setItem(2, 3, icon_item)
+            icon_item.setIcon(self.mixer.remove_icon)
+            
+            # Row 3:
+            self.ui.tableWidget.insertRow(3)
+            self.ui.tableWidget.setItem(3, 0, QTableWidgetItem(str(7)))  # Frequency: 15 Hz (Carrier)
+            self.ui.tableWidget.setItem(3, 1, QTableWidgetItem(str(-0.179428)))   # Amplitude: 1 (Carrier)
+            self.ui.tableWidget.setItem(3, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
 
         elif test=="Test Case 2":
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
