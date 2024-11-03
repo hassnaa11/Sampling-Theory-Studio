@@ -329,38 +329,39 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.frequancy_domain_graph.clear()
 
-        N = len(self.reconstructed_signal.y_vec)
-        dt = self.reconstructed_signal.x_vec[1] - self.reconstructed_signal.x_vec[0] 
-        self.frequencies = np.fft.fftfreq(N, d=dt)  
-        self.amplitude = np.abs(np.fft.fft(self.reconstructed_signal.y_vec)) / N  
+        N = len(self.reconstructed_signal.x_vec)
+        dt = self.reconstructed_signal.x_vec[1] - self.reconstructed_signal.x_vec[0]   
+        self.frequencies = np.fft.fftfreq(N, dt)
+
+        self.amplitude = (np.abs(np.fft.fft(self.reconstructed_signal.y_vec))/ N) 
 
 
         # Plot original signal
         self.frequency_line = frequency_graph.plot(
             self.frequencies,
             self.amplitude,
-            pen=pg.mkPen(color="yellow", width=2.5),
+            pen=pg.mkPen(color="yellow"),
             name='Original Signal'
         )
 
         # Plot aliased components
-        for i in range(1,10):
-            self.after_band_width_line = frequency_graph.plot(
-            self.frequencies + i * self.sampling_frequency,
+       
+        self.after_band_width_line = frequency_graph.plot(
+        self.frequencies + self.sampling_frequency,
+        self.amplitude,
+        pen=pg.mkPen(color="red"),
+        name='After Sampling Frequency'
+        )
+        self.before_band_width_line = frequency_graph.plot(
+            - self.frequencies - self.sampling_frequency,
             self.amplitude,
             pen=pg.mkPen(color="red"),
-            name='After Sampling Frequency'
-        )
-            self.before_band_width_line = frequency_graph.plot(
-                self.frequencies - i * self.sampling_frequency,
-                self.amplitude,
-                pen=pg.mkPen(color="red"),
-                name='Before Sampling Frequency'
+            name='Before Sampling Frequency'
         )
         # Set the range 
         frequency_graph.plotItem.getViewBox().setRange(
             xRange=(-self.sampling_frequency, self.sampling_frequency),  
-            yRange=(0, self.amplitude.max() * 1.1) 
+            yRange=(0, self.amplitude.max() * 1.5) 
         )
         frequency_graph.showGrid(x=True, y=True, alpha=0.3)
 
