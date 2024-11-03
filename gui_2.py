@@ -611,6 +611,7 @@ class Ui_MainWindow(object):
             "\n"
             "QTableWidget::item {\n"
             "    border-bottom: 1px solid gray;\n"
+            "    color: rgb(255, 255, 255);\n"
             "}\n"
             "\n"
             "QTableWidget::item:selected {\n"
