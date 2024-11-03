@@ -392,7 +392,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # Row 1: Envelope Signal
             self.ui.tableWidget.insertRow(1)
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(0.5)))  # Frequency: 0.5 Hz (Envelope)
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(0.5)))  # Amplitude: 0.5 (Envelope)
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 0.5 (Envelope)
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
 
         elif test=="Test Case 2":
@@ -427,36 +427,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 1
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(180)))  # Phase: 180 degrees (π)
             
-
-        # elif test == "Test Case 3":
-        #     self.ui.tableWidget.setRowCount(0)  # Clear previous rows
-
-        #     # Square wave harmonic components for different sampling rates
-        #     sampling_cases = [
-        #         {"Frequency": 1, "Amplitude": 1, "Phase": 0},  # 1 Hz fundamental
-        #         {"Frequency": 3, "Amplitude": 1/3, "Phase": 0},  # 3rd harmonic
-        #         {"Frequency": 5, "Amplitude": 1/5, "Phase": 0},  # 5th harmonic
-        #         {"Frequency": 7, "Amplitude": 1/7, "Phase": 0},  # 7th harmonic
-        #         # Add more harmonics if necessary for the scenario
-        #     ]
-
-        #     # Example case for a 20 Hz sampling rate
-        #     for index, harmonic in enumerate(sampling_cases):
-        #         if self.ui.tableWidget.rowCount() <= index:
-        #             self.ui.tableWidget.insertRow(index)
-        #         self.ui.tableWidget.setItem(index, 0, QTableWidgetItem(str(harmonic["Frequency"])))  # Frequency
-        #         self.ui.tableWidget.setItem(index, 1, QTableWidgetItem(str(harmonic["Amplitude"])))  # Amplitude
-        #         self.ui.tableWidget.setItem(index, 2, QTableWidgetItem(str(harmonic["Phase"])))  # Phase
-
-        #     # Example demonstration messages (optional) to show the difference in reconstruction:
-        #     # At 20 Hz, capture several harmonics and reconstruct the square wave accurately.
-        #     # At 8 Hz, capture limited harmonics, missing details but retaining the basic shape.
-        #     # At 4 Hz, demonstrate the effects of aliasing causing severe distortion.
-
-        #     # If you want to automate more details, such as dynamically changing the sampling rate and plotting the waveforms, additional code may be needed.
-            
-        # # elif test=="Test Case 1":
-
              
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
