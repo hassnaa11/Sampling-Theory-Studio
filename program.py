@@ -43,7 +43,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sampling_frequency = 700 
         self.ui.fs_horizontalSlider.setValue(self.sampling_frequency)  # Set slider to 700 on startup
         print(f"sampling frequecy initial:{self.sampling_frequency}")
-        self.ui.fs_value_label.setText(f"{self.sampling_frequency /100:.2f} Hz")
+        self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
         self.update_slider_range()
         self.init_equal_space()
         self.ui.side_bar_widget.hide()
@@ -112,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.fs_horizontalSlider.setRange(1, 10000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
-            self.ui.fs_value_label.setText(f"{self.sampling_frequency /100:.2f} Hz")
+            self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
             print("Slider in 'Actual' mode: 1 to 1150")
         else:
             print(f"max frequency in update slider{self.max_frequency}")
@@ -130,7 +130,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.sampling_frequency = value
 
         # Update the label with the current frequency
-        self.ui.fs_value_label.setText(f"{self.sampling_frequency / 100:.2f} Hz")
+        self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
         print(f"Current sampling frequency: {self.sampling_frequency}")
 
         self._resample()
