@@ -26,7 +26,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.normalized_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
         self.ui.snr_horizontalSlider.valueChanged.connect(self.set_SNR)
-        self.ui.snr_horizontalSlider.setRange(1,50)
+        self.ui.snr_horizontalSlider.setRange(1,20)
         self.SNR = 1
         self.ui.snr_value_label.setText(f"{self.SNR} SNR")
         self.ui.noise_checkBox.setChecked(False)
@@ -288,9 +288,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # signal power = mean value in the signal  
             signal_power = np.mean(self.signal.y_vec**2)
             # convert dB SNR to linear
-            linear_snr = 10 ** (self.SNR / 10)
+            # linear_snr = 10 ** (self.SNR / 10)
             # SNR = Signal / Noise
-            noise_power = np.sqrt(signal_power) / linear_snr 
+            noise_power = np.sqrt(signal_power) / self.SNR 
             # White Gaussian noise (normal noise)
             noise = noise_power * np.random.normal(size = self.signal.y_vec.shape)
             noisy_signal = noise + self.signal.y_vec
