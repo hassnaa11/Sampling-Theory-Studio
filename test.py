@@ -1,31 +1,36 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Function to create a sharper triangle wave using the sum of cosines (Fourier series)
-def create_sharp_triangle_wave(num_harmonics, time_points):
-    triangle_wave = np.zeros_like(time_points)
-    
-    for k in range(1, num_harmonics + 1, 2):  # Only odd harmonics (1, 3, 5,...)
-        # Calculate the magnitude for the k-th harmonic
-        magnitude = (8 / (np.pi ** 2)) * (1 / (k ** 2)) * (-1 if (k // 2) % 2 else 1)
-        
-        # Sum each cosine term with decreasing magnitude
-        triangle_wave += magnitude * np.cos(2 * np.pi * k * time_points)
-    
-    return triangle_wave
+# Define the signal and noise parameters
+fs = 500  # Sample rate
+t = np.linspace(0, 1, fs)  # Time vector for 1 second
+signal = np.sin(2 * np.pi * 5 * t)  # Example 5 Hz sine wave signal
+snr_dB = 20  # Desired SNR level in dB
 
-# Parameters
-time_points = np.linspace(0, 1, 1000)  # Time points
-num_harmonics = 100  # Increase the number of harmonics for sharper peaks
+# Function to add noise
+def add_noise(signal, snr_dB):
+    # Calculate the signal power
+    signal_power = np.mean(signal**2)
+    # Convert SNR from dB to a linear scale
+    snr_linear = 10**(snr_dB / 10)
+    # Calculate the noise power
+    noise_power = signal_power / snr_linear
+    # Generate white Gaussian noise and scale
+    noise = np.sqrt(noise_power) * np.random.normal(size=signal.shape)
+    # Add noise to the signal
+    noisy_signal = signal + noise
+    return noisy_signal
 
-# Generate the triangle wave signal
-triangle_wave = create_sharp_triangle_wave(num_harmonics, time_points)
+# Generate the noisy signal
+noisy_signal = add_noise(signal, snr_dB)
 
-# Plot the triangle wave
-plt.plot(time_points, triangle_wave, label="Triangle Wave")
-plt.title("Triangle Wave Signal (using Fourier series with more harmonics)")
-plt.xlabel("Time")
+# Plot the original and noisy signals
+plt.figure(figsize=(12, 6))
+plt.plot(t, signal, label="Original Signal", color="blue")
+plt.plot(t, noisy_signal, label=f"Noisy Signal (SNR = {snr_dB} dB)", color="orange", alpha=0.7)
+plt.xlabel("Time [s]")
 plt.ylabel("Amplitude")
-plt.grid()
+plt.title("Signal with Additive Noise")
 plt.legend()
+plt.grid(True)
 plt.show()
