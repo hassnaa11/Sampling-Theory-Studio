@@ -50,10 +50,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
         self.sidebar_visible = False
-        self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
-        self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
+        self.ui.methods_comboBox.activated.connect(self._reconstruct)
+        self.ui.tests_comboBox.activated.connect(self.test_cases)
         
         self.is_mixer_running = False
+        self.is_first_mix = True
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
         # self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
@@ -264,7 +265,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
 
     def mixSignals(self):
-        self.test_cases()
+        if self.is_first_mix:
+            self.is_first_mix =False
+            self.test_cases()
+            
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.ui.side_bar_widget.show()
@@ -389,7 +393,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def test_cases(self):
 
         test=self.ui.tests_comboBox.currentText()
-
+        self.isTest_cases_checked = True
         if test == "Test Case 1":
             
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency: 6
