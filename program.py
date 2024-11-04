@@ -293,17 +293,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def add_noise(self): 
         if self.signal:
             
-            # the original signal without noise
-            original_signal = self.signal.y_vec
-            
-            # how much is noise to the signal eq-> SNR = signal / noise        
-            noise_power = original_signal / self.SNR
-            
+            # signal power = mean value in the signal  
+            signal_power = np.mean(self.signal.y_vec**2)
+            # convert dB SNR to linear
+            linear_snr = 10 ** (self.SNR / 10)
+            # SNR = Signal / Noise
+            noise_power = np.sqrt(signal_power) / linear_snr 
             # White Gaussian noise (normal noise)
-            noise = noise_power * np.random.normal(size=original_signal.shape)
-            
-            # add noise to the signal
-            noisy_signal  = original_signal + noise
+            noise = noise_power * np.random.normal(size = self.signal.y_vec.shape)
+            noisy_signal = noise + self.signal.y_vec
+                        
             self.noisy_signal = signal(self.signal.x_vec, noisy_signal, signalType.CONTINUOUS) 
 
             self.ui.original_signal_graph.plotItem.clear() 
@@ -399,8 +398,8 @@ class MainWindow(QtWidgets.QMainWindow):
             # Amplitude Modulation Example with Carrier and Envelope:
             # Row 0: Carrier Signal
             self.ui.tableWidget.insertRow(0)
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(1)))  # Frequency: 15 Hz (Carrier)
-            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1.27388)))   # Amplitude: 1 (Carrier)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(4)))  # Frequency: 15 Hz (Carrier)
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(5)))   # Amplitude: 1 (Carrier)
             self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
             icon_item = QtWidgets.QTableWidgetItem()
             self.ui.tableWidget.setItem(0, 3, icon_item)
@@ -408,27 +407,10 @@ class MainWindow(QtWidgets.QMainWindow):
             
             # Row 1: Envelope Signal
             self.ui.tableWidget.insertRow(1)
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(3)))  # Frequency: 0.5 Hz (Envelope)
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(-0.424628)))  # Amplitude: 0.5 (Envelope)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(10)))  # Frequency: 0.5 Hz (Envelope)
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(5)))  # Amplitude: 0.5 (Envelope)
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
-            icon_item = QtWidgets.QTableWidgetItem()
-            self.ui.tableWidget.setItem(1, 3, icon_item)
-            icon_item.setIcon(self.mixer.remove_icon)
-            
-            # Row 2:
-            self.ui.tableWidget.insertRow(2)
-            self.ui.tableWidget.setItem(2, 0, QTableWidgetItem(str(5)))  # Frequency: 15 Hz (Carrier)
-            self.ui.tableWidget.setItem(2, 1, QTableWidgetItem(str(0.254777)))   # Amplitude: 1 (Carrier)
-            self.ui.tableWidget.setItem(2, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
-            icon_item = QtWidgets.QTableWidgetItem()
-            self.ui.tableWidget.setItem(2, 3, icon_item)
-            icon_item.setIcon(self.mixer.remove_icon)
-            
-            # Row 3:
-            self.ui.tableWidget.insertRow(3)
-            self.ui.tableWidget.setItem(3, 0, QTableWidgetItem(str(7)))  # Frequency: 15 Hz (Carrier)
-            self.ui.tableWidget.setItem(3, 1, QTableWidgetItem(str(-0.179428)))   # Amplitude: 1 (Carrier)
-            self.ui.tableWidget.setItem(3, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
+
 
         elif test=="Test Case 2":
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
