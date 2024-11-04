@@ -11,13 +11,12 @@ class Reconstructor:
         x_vec = self.sampled_signal.x_vec
         y_vec = self.sampled_signal.y_vec
 
-        # Whittaker-Shannon interpolation formula
-        y_interp = np.zeros_like(t)
-        
-        for i, t_val in enumerate(t):
-            y_interp[i] = np.sum(y_vec * np.sinc((x_vec - t_val) * sampling_frequency))
-        
-        return signal(np.array(t), np.array(y_interp), signalType.CONTINUOUS)
+        # Create a sinc matrix using broadcasting
+        sinc_matrix = np.sinc((t[:, None] - x_vec) / (1/sampling_frequency))
+
+        # Dot product for interpolation
+        y_interp = sinc_matrix.dot(y_vec)
+        return signal(t, y_interp, signalType.CONTINUOUS)
 
     def reconstruct_linear(self, t: np.ndarray):
         x_vec = self.sampled_signal.x_vec

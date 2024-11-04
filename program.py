@@ -109,7 +109,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
             # print(f"self,max_frequency = {self.max_frequency}")
-            self.ui.fs_horizontalSlider.setRange(1, 1000)
+            self.ui.fs_horizontalSlider.setRange(1, 10000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
             self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
@@ -208,6 +208,12 @@ class MainWindow(QtWidgets.QMainWindow):
         
         method = self.ui.methods_comboBox.currentText()
 
+        #  # Ensure high-frequency sampling leads to good interpolation
+        # if self.sampling_frequency >= 2 * self.max_frequency:
+        #     t_high = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 2000)  # Higher resolution for reconstruction
+        #     self.reconstructed_signal = reconstructor.reconstruct_shannon(t_high, self.sampling_frequency)
+
+
         if method == "whittaker_shannon":
                     self.reconstructed_signal = reconstructor.reconstruct_shannon(t, self.sampling_frequency)
         elif method == "Zero-Order Hold":
@@ -221,6 +227,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif method == "RBF interpolation":
             self.reconstructed_signal = reconstructor.reconstruct_RBF(t)
 
+        
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
             self.ui.reconstructed_signal_graph.removeItem(self.reconstruct_curve)
@@ -233,6 +240,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         # Plot the difference signal
+        
         self._calculate_difference()
         self.create_frequency_domain(self.ui.frequancy_domain_graph)
 
@@ -256,6 +264,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
 
     def mixSignals(self):
+        self.test_cases()
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.ui.side_bar_widget.show()
@@ -381,46 +390,38 @@ class MainWindow(QtWidgets.QMainWindow):
 
         test=self.ui.tests_comboBox.currentText()
 
-        if test == "Test":
-        # Optionally, clear the table or show a message indicating no test is selected
-            return
         if test == "Test Case 1":
-            self.ui.tableWidget.setRowCount(0)  # Clear previous rows
+            
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency: 6
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude: 6
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase: 0
+            icon_item = QtWidgets.QTableWidgetItem()
+            self.ui.tableWidget.setItem(0, 3, icon_item)
+            icon_item.setIcon(self.mixer.remove_icon)
 
-            # Amplitude Modulation Example with Carrier and Envelope:
-            # Row 0: Carrier Signal
+            if self.ui.tableWidget.rowCount() < 2:
+                self.ui.tableWidget.insertRow(1)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency: 4
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude: 6
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase: 0
+            
+        elif test=="Test Case 2":
+            self.ui.tableWidget.setRowCount(0)  
             self.ui.tableWidget.insertRow(0)
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(4)))  # Frequency: 15 Hz (Carrier)
-            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(5)))   # Amplitude: 1 (Carrier)
-            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(4)))  
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(5)))   
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  
             icon_item = QtWidgets.QTableWidgetItem()
             self.ui.tableWidget.setItem(0, 3, icon_item)
             icon_item.setIcon(self.mixer.remove_icon)
             
-            # Row 1: Envelope Signal
             self.ui.tableWidget.insertRow(1)
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(10)))  # Frequency: 0.5 Hz (Envelope)
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(5)))  # Amplitude: 0.5 (Envelope)
-            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
-
-
-        elif test=="Test Case 2":
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
-            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude
-            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase
-            icon_item = QtWidgets.QTableWidgetItem()
-            self.ui.tableWidget.setItem(0, 3, icon_item)
-            icon_item.setIcon(self.mixer.remove_icon)
-            # Check if the second row exists; if not, insert it
-            if self.ui.tableWidget.rowCount() < 2:
-                self.ui.tableWidget.insertRow(1)
-            # Set values for the second row
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude
-            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(10)))  
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(5))) 
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))   
 
         elif test == "Test Case 3":
-            self.ui.tableWidget.setRowCount(0)  # Clear previous rows
+            self.ui.tableWidget.setRowCount(0)  
 
             # Phase Cancellation Example:
             self.ui.tableWidget.insertRow(0)

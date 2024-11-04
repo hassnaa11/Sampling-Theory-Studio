@@ -56,7 +56,17 @@ class Mixer(QThread):
         self.max_frequency = 0
         for row in range(row_count):
             # print(row)
-            if self.signals_table.item(row, 0) and self.signals_table.item(row, 1) and self.signals_table.item(row, 2):
+            if self.signals_table.item(row, 0):
+                # default amplitude, phase 
+                amplitude = self.signals_table.item(row, 1)
+                phase = self.signals_table.item(row, 2)
+                if amplitude is None:
+                    amplitude = QtWidgets.QTableWidgetItem('1')
+                    self.signals_table.setItem(row, 1, amplitude)
+                if phase is None:
+                    phase = QtWidgets.QTableWidgetItem('0')
+                    self.signals_table.setItem(row, 2, phase)    
+          
                 # Align text in center
                 self.signals_table.item(row, 0).setTextAlignment(Qt.AlignCenter)
                 self.signals_table.item(row, 1).setTextAlignment(Qt.AlignCenter)
@@ -89,7 +99,7 @@ class Mixer(QThread):
     def plotMixedSignals(self):
         print("plot mixed signals")
         self.preview_graph.clear()
-        self.composed_x_data = np.linspace(0, 5, 4000)
+        self.composed_x_data = np.linspace(0, 5, 1000)
         self.composed_y_data = 0
         # y = A*sin(2πfx + ϕ)
         for signal in self.signals_data.values():
