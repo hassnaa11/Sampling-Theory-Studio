@@ -109,7 +109,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
             # print(f"self,max_frequency = {self.max_frequency}")
-            self.ui.fs_horizontalSlider.setRange(1, 1000)
+            self.ui.fs_horizontalSlider.setRange(1, 10000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
             self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
@@ -208,6 +208,12 @@ class MainWindow(QtWidgets.QMainWindow):
         
         method = self.ui.methods_comboBox.currentText()
 
+        #  # Ensure high-frequency sampling leads to good interpolation
+        # if self.sampling_frequency >= 2 * self.max_frequency:
+        #     t_high = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 2000)  # Higher resolution for reconstruction
+        #     self.reconstructed_signal = reconstructor.reconstruct_shannon(t_high, self.sampling_frequency)
+
+
         if method == "whittaker_shannon":
                     self.reconstructed_signal = reconstructor.reconstruct_shannon(t, self.sampling_frequency)
         elif method == "Zero-Order Hold":
@@ -221,6 +227,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif method == "RBF interpolation":
             self.reconstructed_signal = reconstructor.reconstruct_RBF(t)
 
+        
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
             self.ui.reconstructed_signal_graph.removeItem(self.reconstruct_curve)
@@ -233,6 +240,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         # Plot the difference signal
+        
         self._calculate_difference()
         self.create_frequency_domain(self.ui.frequancy_domain_graph)
 
@@ -400,13 +408,8 @@ class MainWindow(QtWidgets.QMainWindow):
             
             # Row 1: Envelope Signal
             self.ui.tableWidget.insertRow(1)
-<<<<<<< HEAD
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(0.5)))  # Frequency: 0.5 Hz (Envelope)
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 0.5 (Envelope)
-=======
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(3)))  # Frequency: 0.5 Hz (Envelope)
             self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(-0.424628)))  # Amplitude: 0.5 (Envelope)
->>>>>>> 53ae3d1fcc9351bca182bb066af13b1b9c1afcf4
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
             icon_item = QtWidgets.QTableWidgetItem()
             self.ui.tableWidget.setItem(1, 3, icon_item)
