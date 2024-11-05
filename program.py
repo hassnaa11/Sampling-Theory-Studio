@@ -55,6 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
         
         self.is_mixer_running = False
+        self.is_first_mix = True
         self.mixer = Mixer(self.ui.tableWidget, self.ui.mixed_signal_graph)
         # self.ui.mixer_button.clicked.connect(self.toggle_sidebar)
         self.ui.mixer_button.clicked.connect(self.mixSignals)
@@ -286,6 +287,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
 
     def mixSignals(self):
+        if self.is_first_mix:
+            self.is_first_mix =False
+            self.test_cases()
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.ui.side_bar_widget.show()
