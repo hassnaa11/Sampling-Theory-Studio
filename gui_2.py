@@ -10,11 +10,13 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
+from PyQt5.QtGui import QIcon
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("Sampling Theory Studio")
+        MainWindow.setWindowIcon(QIcon("images/icons8-creative-commons-sampling-90.png"))
         MainWindow.resize(1464, 667)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -590,7 +592,6 @@ class Ui_MainWindow(object):
         self.tests_comboBox.addItem("")
         self.tests_comboBox.addItem("")
         self.tests_comboBox.addItem("")
-        self.tests_comboBox.addItem("")
         self.horizontalLayout_8.addWidget(self.tests_comboBox)
         self.verticalLayout_6.addLayout(self.horizontalLayout_8)
         self.tableWidget = QtWidgets.QTableWidget(self.side_bar_widget)
@@ -601,12 +602,17 @@ class Ui_MainWindow(object):
         self.tableWidget.setSizePolicy(sizePolicy)
         self.tableWidget.setMinimumSize(QtCore.QSize(300, 0))
         self.tableWidget.setStyleSheet(
+            "QWidget {\n"
+            "   color: rgb(255, 255, 255);\n" 
+            "}\n"
+        
             "QTableWidget {\n"
             "    background-color: rgb(0, 0, 0);\n"
             "    color: rgb(255, 255, 255);\n"
             "    border: none;\n"
             "    font-family: \"Arial\";\n"
             "    font-size: 14px;\n"
+            
             "}\n"
             "\n"
             "QTableWidget::item {\n"
@@ -621,6 +627,9 @@ class Ui_MainWindow(object):
             "}\n"
             "\n"
             "QHeaderView::section {\n"
+            "    background-color: rgb(0, 0, 0);\n"
+            "    background-color: rgb(255, 255, 255);\n"
+            "    color: rgb(0, 0, 0);\n"
             "    border: none;\n"
             "}\n"
             "\n"
@@ -735,7 +744,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Sampling Theory Studio"))
         self.title_label.setText(_translate("MainWindow", "Sampling Theory Studio"))
         self.original_signal_label.setText(_translate("MainWindow", "Original Signal"))
         self.open_file_button.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
@@ -764,10 +773,10 @@ class Ui_MainWindow(object):
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
         self.frequancy_domain_label.setText(_translate("MainWindow", "Frequency Domain"))
         self.mixer_label.setText(_translate("MainWindow", "Mixer"))
-        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test"))
-        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Test Case 1"))
-        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Test Case 2"))
-        self.tests_comboBox.setItemText(3, _translate("MainWindow", "Test Case 3"))
+        # self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test"))
+        self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test Case 1"))
+        self.tests_comboBox.setItemText(1, _translate("MainWindow", "Test Case 2"))
+        self.tests_comboBox.setItemText(2, _translate("MainWindow", "Test Case 3"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "frequency"))
         item = self.tableWidget.horizontalHeaderItem(1)

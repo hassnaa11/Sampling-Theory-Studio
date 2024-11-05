@@ -15,25 +15,6 @@ class Mixer(QThread):
         self.remove_icon.addPixmap(QtGui.QPixmap("images\icons8-remove-64.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.signals_table.cellClicked.connect(self.handleCellClick)
 
-        self.signals_table.setStyleSheet("background-color: black; color: white;")
-        # self.signals_table.setStyleSheet("""
-        #     QTableWidget {
-        #         background-color: black;
-        #         color: white;
-        #     }
-        #     QTableWidget::item {
-        #         background-color: black;
-        #         color: white;
-        #     }
-        #     QTableWidget::item:selected {
-        #         background-color: black;
-        #         color: white;
-        #         QTableWidget::item {
-        #         background-color: black;
-        #         color: white;
-        #     }                         
-        #     }
-        # """)
         font = QFont("Arial", 10)
         self.signals_table.setFont(font)
         self.signals_table.itemChanged.connect(self.update_item)
@@ -56,12 +37,23 @@ class Mixer(QThread):
         self.max_frequency = 0
         for row in range(row_count):
             # print(row)
-            if self.signals_table.item(row, 0) and self.signals_table.item(row, 1) and self.signals_table.item(row, 2):
+            if self.signals_table.item(row, 0):
+                # default amplitude, phase 
+                amplitude = self.signals_table.item(row, 1)
+                phase = self.signals_table.item(row, 2)
+                if amplitude is None:
+                    amplitude = QtWidgets.QTableWidgetItem('1')
+                    self.signals_table.setItem(row, 1, amplitude)
+                if phase is None:
+                    phase = QtWidgets.QTableWidgetItem('0')
+                    self.signals_table.setItem(row, 2, phase)    
+          
                 # Align text in center
                 self.signals_table.item(row, 0).setTextAlignment(Qt.AlignCenter)
                 self.signals_table.item(row, 1).setTextAlignment(Qt.AlignCenter)
                 self.signals_table.item(row, 2).setTextAlignment(Qt.AlignCenter)
-                
+                                
+                # store signal data in signals_data dict
                 signals_data[row] = {
                     'Frequency': self.signals_table.item(row, 0).text(),
                     'Amplitude': self.signals_table.item(row, 1).text(),
@@ -80,9 +72,12 @@ class Mixer(QThread):
                             
         # check if all rows have data then add new row  
         if rows == row_count: 
-            icon_item = QtWidgets.QTableWidgetItem()
-            self.signals_table.setItem(rows - 1, 3, icon_item)
-            icon_item.setIcon(self.remove_icon)
+            # add remove icon        
+            remove_icon_item = QtWidgets.QTableWidgetItem()
+            remove_icon_item.setIcon(self.remove_icon)
+            remove_icon_item.setTextAlignment(Qt.AlignCenter)
+            self.signals_table.setItem(rows - 1, 3, remove_icon_item)
+            # insert new row
             self.signals_table.insertRow(self.signals_table.rowCount())
             
             
