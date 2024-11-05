@@ -19,6 +19,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.from_file = False
         self.ui.open_file_button.clicked.connect(self.open_file)
 
         self.ui.actual_radioButton.setChecked(True)
@@ -65,6 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)")
 
         if file_name:
+            self.from_file = True 
             self.plot_csv_data(file_name)
 
     def plot_csv_data(self, file_name):
@@ -105,38 +107,46 @@ class MainWindow(QtWidgets.QMainWindow):
         self.max_frequency = fs/2
 
         print(f"Calculated maximum frequency: {self.max_frequency} Hz")
-        
+
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
-            # print(f"self,max_frequency = {self.max_frequency}")
+            # Actual mode
+            actual_frequency = self.sampling_frequency if not self.from_file else self.sampling_frequency / 100
             self.ui.fs_horizontalSlider.setRange(1, 10000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
-            self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
-            self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
-            print("Slider in 'Actual' mode: 1 to 1150")
+            self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency))  # Slider remains at actual frequency
+            self.ui.fs_value_label.setText(f"{actual_frequency:.2f} Hz")
+            print("Switched to 'Actual' mode. Slider set to:", actual_frequency)
         else:
-            print(f"max frequency in update slider{self.max_frequency}")
-            self.freq_values = [1 * self.max_frequency, 2 * self.max_frequency, 3 * self.max_frequency, 4 * self.max_frequency]
-            self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
+            # Normalized mode
+            slider_steps = 30
+            self.ui.fs_horizontalSlider.setRange(0, slider_steps)
             self.ui.fs_horizontalSlider.setSingleStep(1)
-            self.ui.fs_horizontalSlider.setValue(0)
-            self.set_sampling_frequency(0)  
-            print("Slider in 'Normalized' mode: four max frequencies")
+            normalized_value = int((self.sampling_frequency / self.max_frequency - 1.0) * 30 / 3)
+            self.ui.fs_horizontalSlider.setValue(normalized_value)
+            normalized_display = (self.sampling_frequency / 100) if self.from_file else self.sampling_frequency
+            self.ui.fs_value_label.setText(f"{normalized_display:.2f} Hz")
+            print("Switched to 'Normalized' mode. Slider range is 1 * fmax to 4 * fmax")
 
     def set_sampling_frequency(self, value):
         if self.ui.normalized_radioButton.isChecked():
-            self.sampling_frequency = self.freq_values[value]
+            min_factor = 1.0
+            max_factor = 4.0
+            factor_range = max_factor - min_factor
+            self.sampling_frequency = (min_factor + (value / 30) * factor_range) * self.max_frequency
         else:
             self.sampling_frequency = value
 
-        # Update the label with the current frequency
-        self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
-        print(f"Current sampling frequency: {self.sampling_frequency}")
+        display_frequency = self.sampling_frequency if not self.from_file else self.sampling_frequency / 100
+        self.ui.fs_value_label.setText(f"{display_frequency:.2f} Hz")
+        print(f"Current sampling frequency: {self.sampling_frequency:.2f} (display: {display_frequency:.2f} Hz)")
 
         self._resample()
         self._reconstruct()
 
     def plot_composed_signal(self):
+        self.from_file = False
+
         self.mixer.stop()
         self.is_mixer_running = False
         print("i am in plot composed signal")
@@ -178,6 +188,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.reconstructed_signal_graph.plotItem.clear() 
             self.ui.difference_signal_graph.plotItem.clear()
             self.ui.frequancy_domain_graph.plotItem.clear()
+        self.update_slider_range()
 
     def _resample(self):
         if(self.ui.noise_checkBox.isChecked()):
