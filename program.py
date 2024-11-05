@@ -110,33 +110,44 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
-            # Actual mode
+            # Switch to Actual mode
             actual_frequency = self.sampling_frequency if not self.from_file else self.sampling_frequency / 100
             self.ui.fs_horizontalSlider.setRange(1, 10000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
-            self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency))  # Slider remains at actual frequency
+            self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency))  # Set slider to actual frequency
             self.ui.fs_value_label.setText(f"{actual_frequency:.2f} Hz")
             print("Switched to 'Actual' mode. Slider set to:", actual_frequency)
+
         else:
-            # Normalized mode
+            # Switch to Normalized mode
             slider_steps = 30
+            min_factor = 1.0
+            max_factor = 4.0
+            factor_range = max_factor - min_factor
+
+            # Calculate normalized slider position based on current frequency
+            normalized_slider_value = int((self.sampling_frequency / self.max_frequency - min_factor) * slider_steps / factor_range)
             self.ui.fs_horizontalSlider.setRange(0, slider_steps)
             self.ui.fs_horizontalSlider.setSingleStep(1)
-            normalized_value = int((self.sampling_frequency / self.max_frequency - 1.0) * 30 / 3)
-            self.ui.fs_horizontalSlider.setValue(normalized_value)
+            self.ui.fs_horizontalSlider.setValue(normalized_slider_value)
+
+            # Adjust displayed frequency in the label
             normalized_display = (self.sampling_frequency / 100) if self.from_file else self.sampling_frequency
             self.ui.fs_value_label.setText(f"{normalized_display:.2f} Hz")
-            print("Switched to 'Normalized' mode. Slider range is 1 * fmax to 4 * fmax")
+            print("Switched to 'Normalized' mode. Slider adjusted to normalized value:", normalized_slider_value)
 
     def set_sampling_frequency(self, value):
         if self.ui.normalized_radioButton.isChecked():
+            # Normalized mode: calculate frequency based on slider position
             min_factor = 1.0
             max_factor = 4.0
             factor_range = max_factor - min_factor
             self.sampling_frequency = (min_factor + (value / 30) * factor_range) * self.max_frequency
         else:
+            # Actual mode: direct assignment from slider
             self.sampling_frequency = value
 
+        # Display the adjusted frequency in the label
         display_frequency = self.sampling_frequency if not self.from_file else self.sampling_frequency / 100
         self.ui.fs_value_label.setText(f"{display_frequency:.2f} Hz")
         print(f"Current sampling frequency: {self.sampling_frequency:.2f} (display: {display_frequency:.2f} Hz)")
