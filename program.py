@@ -19,6 +19,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.from_file = False
         self.ui.open_file_button.clicked.connect(self.open_file)
 
         self.ui.actual_radioButton.setChecked(True)
@@ -26,7 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.normalized_radioButton.toggled.connect(self.update_slider_range)
         self.ui.fs_horizontalSlider.valueChanged.connect(self.set_sampling_frequency)
         self.ui.snr_horizontalSlider.valueChanged.connect(self.set_SNR)
-        self.ui.snr_horizontalSlider.setRange(1,20)
+        self.ui.snr_horizontalSlider.setRange(1,50)
         self.SNR = 1
         self.ui.snr_value_label.setText(f"{self.SNR} SNR")
         self.ui.noise_checkBox.setChecked(False)
@@ -50,8 +51,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.freq_values = []
         self.max_frequency = 150 #this will be calculated by the function 
         self.sidebar_visible = False
-        self.ui.methods_comboBox.activated.connect(self._reconstruct)
-        self.ui.tests_comboBox.activated.connect(self.test_cases)
+        self.ui.methods_comboBox.currentIndexChanged.connect(self._reconstruct)
+        self.ui.tests_comboBox.currentIndexChanged.connect(self.test_cases)
         
         self.is_mixer_running = False
         self.is_first_mix = True
@@ -66,6 +67,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)")
 
         if file_name:
+            self.from_file = True 
             self.plot_csv_data(file_name)
 
     def plot_csv_data(self, file_name):
@@ -106,38 +108,57 @@ class MainWindow(QtWidgets.QMainWindow):
         self.max_frequency = fs/2
 
         print(f"Calculated maximum frequency: {self.max_frequency} Hz")
-        
+
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
-            # print(f"self,max_frequency = {self.max_frequency}")
+            # Switch to Actual mode
+            actual_frequency = self.sampling_frequency if not self.from_file else self.sampling_frequency / 100
             self.ui.fs_horizontalSlider.setRange(1, 10000)
             self.ui.fs_horizontalSlider.setSingleStep(1)
-            self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency)) 
-            self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
-            print("Slider in 'Actual' mode: 1 to 1150")
+            self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency))  # Set slider to actual frequency
+            self.ui.fs_value_label.setText(f"{actual_frequency:.2f} Hz")
+            print("Switched to 'Actual' mode. Slider set to:", actual_frequency)
+
         else:
-            print(f"max frequency in update slider{self.max_frequency}")
-            self.freq_values = [1 * self.max_frequency, 2 * self.max_frequency, 3 * self.max_frequency, 4 * self.max_frequency]
-            self.ui.fs_horizontalSlider.setRange(0, len(self.freq_values) - 1)
+            # Switch to Normalized mode
+            slider_steps = 30
+            min_factor = 1.0
+            max_factor = 4.0
+            factor_range = max_factor - min_factor
+
+            # Calculate normalized slider position based on current frequency
+            normalized_slider_value = int((self.sampling_frequency / self.max_frequency - min_factor) * slider_steps / factor_range)
+            self.ui.fs_horizontalSlider.setRange(0, slider_steps)
             self.ui.fs_horizontalSlider.setSingleStep(1)
-            self.ui.fs_horizontalSlider.setValue(0)
-            self.set_sampling_frequency(0)  
-            print("Slider in 'Normalized' mode: four max frequencies")
+            self.ui.fs_horizontalSlider.setValue(normalized_slider_value)
+
+            # Adjust displayed frequency in the label
+            normalized_display = (self.sampling_frequency / 100) if self.from_file else self.sampling_frequency
+            self.ui.fs_value_label.setText(f"{normalized_display:.2f} Hz")
+            print("Switched to 'Normalized' mode. Slider adjusted to normalized value:", normalized_slider_value)
 
     def set_sampling_frequency(self, value):
         if self.ui.normalized_radioButton.isChecked():
-            self.sampling_frequency = self.freq_values[value]
+            # Normalized mode: calculate frequency based on slider position
+            min_factor = 1.0
+            max_factor = 4.0
+            factor_range = max_factor - min_factor
+            self.sampling_frequency = (min_factor + (value / 30) * factor_range) * self.max_frequency
         else:
+            # Actual mode: direct assignment from slider
             self.sampling_frequency = value
 
-        # Update the label with the current frequency
-        self.ui.fs_value_label.setText(f"{self.sampling_frequency:.2f} Hz")
-        print(f"Current sampling frequency: {self.sampling_frequency}")
+        # Display the adjusted frequency in the label
+        display_frequency = self.sampling_frequency if not self.from_file else self.sampling_frequency / 100
+        self.ui.fs_value_label.setText(f"{display_frequency:.2f} Hz")
+        print(f"Current sampling frequency: {self.sampling_frequency:.2f} (display: {display_frequency:.2f} Hz)")
 
         self._resample()
         self._reconstruct()
 
     def plot_composed_signal(self):
+        self.from_file = False
+
         self.mixer.stop()
         self.is_mixer_running = False
         print("i am in plot composed signal")
@@ -179,6 +200,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.reconstructed_signal_graph.plotItem.clear() 
             self.ui.difference_signal_graph.plotItem.clear()
             self.ui.frequancy_domain_graph.plotItem.clear()
+        self.update_slider_range()
 
     def _resample(self):
         if(self.ui.noise_checkBox.isChecked()):
@@ -268,7 +290,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.is_first_mix:
             self.is_first_mix =False
             self.test_cases()
-            
         self.is_mixer_running = not self.is_mixer_running 
         if self.is_mixer_running and self.mixer.running == False:
             self.ui.side_bar_widget.show()
@@ -301,9 +322,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # signal power = mean value in the signal  
             signal_power = np.mean(self.signal.y_vec**2)
             # convert dB SNR to linear
-            # linear_snr = 10 ** (self.SNR / 10)
+            linear_snr = 10 ** (self.SNR / 10)
             # SNR = Signal / Noise
-            noise_power = np.sqrt(signal_power) / self.SNR 
+            noise_power = np.sqrt(signal_power) / linear_snr 
             # White Gaussian noise (normal noise)
             noise = noise_power * np.random.normal(size = self.signal.y_vec.shape)
             noisy_signal = noise + self.signal.y_vec
@@ -393,39 +414,47 @@ class MainWindow(QtWidgets.QMainWindow):
     def test_cases(self):
 
         test=self.ui.tests_comboBox.currentText()
-        self.isTest_cases_checked = True
+
+        if test == "Test":
+        # Optionally, clear the table or show a message indicating no test is selected
+            return
         if test == "Test Case 1":
-            
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency: 6
-            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude: 6
-            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase: 0
+            self.ui.tableWidget.setRowCount(0)  # Clear previous rows
+
+            # Amplitude Modulation Example with Carrier and Envelope:
+            # Row 0: Carrier Signal
+            self.ui.tableWidget.insertRow(0)
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(4)))  # Frequency: 15 Hz (Carrier)
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(5)))   # Amplitude: 1 (Carrier)
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))   # Phase: 0 (Carrier)
             icon_item = QtWidgets.QTableWidgetItem()
             self.ui.tableWidget.setItem(0, 3, icon_item)
             icon_item.setIcon(self.mixer.remove_icon)
+            
+            # Row 1: Envelope Signal
+            self.ui.tableWidget.insertRow(1)
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(10)))  # Frequency: 0.5 Hz (Envelope)
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(5)))  # Amplitude: 0.5 (Envelope)
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))    # Phase: 0 (Envelope)
 
+
+        elif test=="Test Case 2":
+            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(6)))  # Frequency
+            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(6)))  # Amplitude
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  # Phase
+            icon_item = QtWidgets.QTableWidgetItem()
+            self.ui.tableWidget.setItem(0, 3, icon_item)
+            icon_item.setIcon(self.mixer.remove_icon)
+            # Check if the second row exists; if not, insert it
             if self.ui.tableWidget.rowCount() < 2:
                 self.ui.tableWidget.insertRow(1)
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency: 4
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude: 6
-            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase: 0
-            
-        elif test=="Test Case 2":
-            self.ui.tableWidget.setRowCount(0)  
-            self.ui.tableWidget.insertRow(0)
-            self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(4)))  
-            self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(5)))   
-            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(0)))  
-            icon_item = QtWidgets.QTableWidgetItem()
-            self.ui.tableWidget.setItem(0, 3, icon_item)
-            icon_item.setIcon(self.mixer.remove_icon)
-            
-            self.ui.tableWidget.insertRow(1)
-            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(10)))  
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(5))) 
-            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))   
+            # Set values for the second row
+            self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(4)))  # Frequency
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(6)))  # Amplitude
+            self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase
 
         elif test == "Test Case 3":
-            self.ui.tableWidget.setRowCount(0)  
+            self.ui.tableWidget.setRowCount(0)  # Clear previous rows
 
             # Phase Cancellation Example:
             self.ui.tableWidget.insertRow(0)
