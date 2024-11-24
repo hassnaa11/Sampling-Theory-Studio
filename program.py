@@ -271,19 +271,23 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.signal or not self.reconstructed_signal:
             return
         
-        # Define x_diff to be the same as the original signal's x-values
+        # Define x_axis as the original x_axis
         x_diff = self.signal.x_vec
-        
-        # Interpolate the reconstructed signal to match the original signal's x values
+
         y_interp = np.interp(x_diff, self.reconstructed_signal.x_vec, self.reconstructed_signal.y_vec)
+
+        if self.ui.noise_checkBox.isChecked() and hasattr(self, 'noisy_signal'):
+            # add the noise from the noisy signal to get the original signal
+            noise_component = self.noisy_signal.y_vec - self.signal.y_vec
+            y_diff = self.signal.y_vec + (noise_component/2) - y_interp
+        else:
+            y_diff = self.signal.y_vec - y_interp
         
         # Calculate the difference
-        y_diff = self.signal.y_vec - y_interp
+        # y_diff = self.signal.y_vec - y_interp
 
-        # Clear any previous difference plot
         self.ui.difference_signal_graph.plotItem.clear()
 
-        # Plot the difference signal
         self.ui.difference_signal_graph.plot(x_diff, y_diff, pen=pg.mkPen(color=(255, 0, 0)))  # Red pen for difference signal
 
     def mixSignals(self):
