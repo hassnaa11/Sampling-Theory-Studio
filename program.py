@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5 import QtCore
 from gui_2 import Ui_MainWindow
 from mixer import Mixer
-
+from scipy.fft import rfft, rfftfreq
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QTableWidgetItem
 import pyqtgraph as pg
@@ -12,7 +12,9 @@ from models.signal import signal, signalType
 from models.sampler import Sampler           
 from models.reconstruction import Reconstructor 
 import numpy as np
+import math
 from scipy.signal import butter, filtfilt
+from scipy.signal import find_peaks
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -82,7 +84,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.signal = signal(x, y, signalType.CONTINUOUS)
 
             # Calculate the maximum frequency for the loaded signal
-            self.calculate_max_frequency(x, y)
+            self.calculate_max_frequency(x,y)
+            # self.calculate_max_frequency(self.signal)
 
             # Clear any previous plots
             self.ui.original_signal_graph.plotItem.clear() 
@@ -106,8 +109,46 @@ class MainWindow(QtWidgets.QMainWindow):
     def calculate_max_frequency(self, x, y):
         fs = 1/(x[1] - x[0])
         self.max_frequency = fs/2
-
         print(f"Calculated maximum frequency: {self.max_frequency} Hz")
+
+        # x_vec = np.array(signal.x_vec[:1000])
+        # y_vec = np.array(signal.y_vec[:1000])
+
+        # # Remove DC component by subtracting the mean
+        # y_vec = y_vec - np.mean(y_vec)
+
+        # # Calculate the sampling rate (Assumes evenly spaced time samples)
+        # sampling_rate = 1 / (x_vec[1] - x_vec[0])
+
+        # # Perform the FFT on the limited points
+        # fft_result = rfft(y_vec)
+        # frequencies = rfftfreq(len(y_vec), d=(x_vec[1] - x_vec[0]))
+
+        # # Calculate the magnitude of the FFT result
+        # magnitude = np.abs(fft_result)
+
+        # # Ignore the DC component (frequency = 0) for peak detection
+        # magnitude[0] = 0
+
+        # # Find peaks in the FFT magnitude
+        # peaks, _ = find_peaks(magnitude, height=0)
+
+        # if len(peaks) == 0:
+        #     # If no peaks are found, return 0 (no significant frequency components)
+        #     self.max_frequency = 0
+        #     print("No significant frequency components found.")
+        #     # return self.max_frequency
+
+        # # Identify the peak with the maximum magnitude
+        # max_peak_index = peaks[np.argmax(magnitude[peaks])]
+        # max_frequency = frequencies[max_peak_index]
+
+        # # Store the maximum frequency in the class attribute
+        # self.max_frequency = max_frequency
+
+        # print(f"Max frequency: {self.max_frequency} Hz")
+        # # return self.max_frequency
+
 
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
