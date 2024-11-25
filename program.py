@@ -278,8 +278,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.ui.noise_checkBox.isChecked() and hasattr(self, 'noisy_signal'):
             # add the noise from the noisy signal to get the original signal
+            # y_diff = self.signal.y_vec - y_interp
             noise_component = self.noisy_signal.y_vec - self.signal.y_vec
-            y_diff = self.signal.y_vec + (noise_component/2) - y_interp
+            y_diff = (self.signal.y_vec - (noise_component)) - y_interp
         else:
             y_diff = self.signal.y_vec - y_interp
         
