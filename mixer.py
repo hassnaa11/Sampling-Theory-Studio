@@ -88,7 +88,7 @@ class Mixer(QThread):
         self.composed_y_data = 0
         # y = A*sin(2πfx + ϕ)
         for signal in self.signals_data.values():
-            self.composed_y_data += np.cos(2*np.pi * float(signal['Frequency']) * self.composed_x_data + float(signal['Phase'])) * float(signal['Amplitude'])
+            self.composed_y_data += np.sin(2*np.pi * float(signal['Frequency']) * self.composed_x_data + float(signal['Phase'])) * float(signal['Amplitude'])
         
         if np.any(self.composed_y_data != 0):
             self.preview_graph.plot( self.composed_x_data, self.composed_y_data, pen="w")
