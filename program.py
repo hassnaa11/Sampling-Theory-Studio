@@ -321,9 +321,11 @@ class MainWindow(QtWidgets.QMainWindow):
             # add the noise from the noisy signal to get the original signal
             # y_diff = self.signal.y_vec - y_interp
             noise_component = self.noisy_signal.y_vec - self.signal.y_vec
-            y_diff = (self.signal.y_vec - (noise_component)) - y_interp
+            # y_diff = (self.signal.y_vec - (noise_component)) - y_interp
+            y_diff = self.noisy_signal.y_vec - self.reconstructed_signal.y_vec
+            # y_diff = self.signal.y_vec - y_interp  - noise_component
         else:
-            y_diff = self.signal.y_vec - y_interp
+            y_diff = self.signal.y_vec - self.reconstructed_signal.y_vec
         
         # Calculate the difference
         # y_diff = self.signal.y_vec - y_interp
