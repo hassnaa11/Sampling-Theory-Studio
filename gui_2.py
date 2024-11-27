@@ -468,13 +468,57 @@ class Ui_MainWindow(object):
 
         self.difference_signal_graph = pg.PlotWidget(self.centralwidget)
         self.difference_signal_graph.setMouseEnabled(x=True, y=True)
+        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        # sizePolicy.setHorizontalStretch(0)
+        # sizePolicy.setVerticalStretch(0)
+        # sizePolicy.setHeightForWidth(self.difference_signal_graph.sizePolicy().hasHeightForWidth())
+#         self.difference_signal_graph.setSizePolicy(sizePolicy)
+#         self.difference_signal_graph.setMinimumSize(QtCore.QSize(0, 110))
+#         # self.difference_signal_graph.setBackground((27,27,27))
+#         self.difference_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
+# "border-radius: 25px;\n"
+# "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+# "widget-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
+# "")
+        self.horizontalLayout_diff = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_diff.setObjectName("horizontalLayout_diff")
+        self.difference_signal_label = QtWidgets.QLabel(self.page_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.difference_signal_label.sizePolicy().hasHeightForWidth())
+        self.difference_signal_label.setSizePolicy(sizePolicy)
+        self.difference_signal_label.setStyleSheet("color: rgb(255, 255, 255);\n"
+"font: italic 11pt \"Georgia\";\n"
+"")
+        self.difference_signal_label.setTextFormat(QtCore.Qt.PlainText)
+        self.difference_signal_label.setObjectName("difference_signal_label")
+        self.horizontalLayout_diff.addWidget(self.difference_signal_label)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_diff.addItem(spacerItem3)
+        self.mean_error = QtWidgets.QLabel(self.page_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.mean_error.sizePolicy().hasHeightForWidth())
+        self.mean_error.setSizePolicy(sizePolicy)
+        self.mean_error.setMaximumSize(QtCore.QSize(180, 16777215))
+        self.mean_error.setStyleSheet("  background-color: #1C1C1C;  /* Background color */\n"
+"    color: white;  /* Text color */\n"
+"    border: 1px solid #1C1C1C;\n"
+"    border-radius: 15px;  /* Rounded corners */\n"
+"    padding: 5px;\n"
+"    font: italic 10pt \"Georgia\";")
+        self.mean_error.setObjectName("mean_error")
+        self.horizontalLayout_diff.addWidget(self.mean_error)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_diff)
+        # self.difference_signal_graph = QtWidgets.QWidget(self.page_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.difference_signal_graph.sizePolicy().hasHeightForWidth())
         self.difference_signal_graph.setSizePolicy(sizePolicy)
         self.difference_signal_graph.setMinimumSize(QtCore.QSize(0, 110))
-        # self.difference_signal_graph.setBackground((27,27,27))
         self.difference_signal_graph.setStyleSheet("background-color: rgb(27, 27, 27);\n"
 "border-radius: 25px;\n"
 "buttoon-shadow: 2px 2px 5px rgb(0, 0, 0);\n"
@@ -771,6 +815,7 @@ class Ui_MainWindow(object):
         self.reconstructed_signal_label.setText(_translate("MainWindow", "Reconstructed Signal"))
         self.error_frequency_toggle_button.setText(_translate("MainWindow", "Show Frequency Domain"))
         self.difference_signal_label.setText(_translate("MainWindow", "Difference Signal"))
+        
         self.frequancy_domain_label.setText(_translate("MainWindow", "Frequency Domain"))
         self.mixer_label.setText(_translate("MainWindow", "Mixer"))
         # self.tests_comboBox.setItemText(0, _translate("MainWindow", "Test"))

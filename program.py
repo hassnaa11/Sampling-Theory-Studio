@@ -43,6 +43,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sampling_curve = None
         self.reconstruct_curve = None
         self.difference_curve = None  
+        self.mean_error = 0
+        self.ui.mean_error.setText(f"Mean Error: {self.mean_error}")
         self.sampling_frequency = 700 
         self.ui.fs_horizontalSlider.setValue(self.sampling_frequency)  # Set slider to 700 on startup
         print(f"sampling frequecy initial:{self.sampling_frequency}")
@@ -154,7 +156,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.ui.actual_radioButton.isChecked():
             # Switch to Actual mode
             actual_frequency = self.sampling_frequency if not self.from_file else self.sampling_frequency / 100
-            self.ui.fs_horizontalSlider.setRange(1, 10000)
+            self.ui.fs_horizontalSlider.setRange(1, 400)
             self.ui.fs_horizontalSlider.setSingleStep(1)
             self.ui.fs_horizontalSlider.setValue(int(self.sampling_frequency))  # Set slider to actual frequency
             self.ui.fs_value_label.setText(f"{actual_frequency:.2f} Hz")
@@ -290,7 +292,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reconstructed_signal = reconstructor.reconstruct_cubic_spline(t)
         elif method == "RBF interpolation":
             self.reconstructed_signal = reconstructor.reconstruct_RBF(t)
-
         
         # Clear previous reconstructed plot
         if self.reconstruct_curve is not None:
@@ -310,25 +311,23 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _calculate_difference(self):
         if not self.signal or not self.reconstructed_signal:
-            return
-        
-        # Define x_axis as the original x_axis
+            return        
         x_diff = self.signal.x_vec
 
-        y_interp = np.interp(x_diff, self.reconstructed_signal.x_vec, self.reconstructed_signal.y_vec)
+        # y_interp = np.interp(x_diff, self.reconstructed_signal.x_vec, self.reconstructed_signal.y_vec)
 
         if self.ui.noise_checkBox.isChecked() and hasattr(self, 'noisy_signal'):
-            # add the noise from the noisy signal to get the original signal
-            # y_diff = self.signal.y_vec - y_interp
-            noise_component = self.noisy_signal.y_vec - self.signal.y_vec
-            # y_diff = (self.signal.y_vec - (noise_component)) - y_interp
             y_diff = self.noisy_signal.y_vec - self.reconstructed_signal.y_vec
-            # y_diff = self.signal.y_vec - y_interp  - noise_component
+            # y_diff = self.signal.y_vec - self.reconstructed_signal.y_vec 
         else:
             y_diff = self.signal.y_vec - self.reconstructed_signal.y_vec
         
-        # Calculate the difference
-        # y_diff = self.signal.y_vec - y_interp
+        # y_diff = self.signal.y_vec - self.reconstructed_signal.y_vec
+        
+        self.mean_error =  np.mean(np.abs(y_diff)) 
+        print("Mean Error: ",self.mean_error )
+        self.ui.mean_error.setText(f"Mean Error: {self.mean_error:.3f}")
+        
 
         self.ui.difference_signal_graph.plotItem.clear()
 
