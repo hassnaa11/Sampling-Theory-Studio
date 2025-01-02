@@ -59,13 +59,7 @@ Four graphs are displayed:
 
 ---
 
-### 6. Resizable UI
-
-- The application supports resizing without distorting the layout or graphs.
-
----
-
-### 7. Different Sampling Scenarios
+### 6. Different Sampling Scenarios
 
 - Prepares at least three synthetic signal examples:
 
