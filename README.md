@@ -75,12 +75,24 @@ Four graphs are displayed:
 
 ---
 
-## Installation
+## Usage
 
-1. Clone the repository:
+1. Install requirements:
 
    ```bash
-   git clone https://github.com/hassnaa11/Sampling-Theory-Studio.git  
+   git install -r requirements.txt
+   cd sampling-theory-studio
+   ```
+2. Clone the repository:
+
+   ```bash
+   git clone "https://github.com/hassnaa11/Sampling-Theory-Studio.git"  
+   cd sampling-theory-studio
+   ```
+3. Run the program:
+
+   ```bash
+   python program.py  
    cd sampling-theory-studio
    ```
 
