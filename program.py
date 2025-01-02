@@ -113,44 +113,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.max_frequency = fs/2
         print(f"Calculated maximum frequency: {self.max_frequency} Hz")
 
-        # x_vec = np.array(signal.x_vec[:1000])
-        # y_vec = np.array(signal.y_vec[:1000])
-
-        # # Remove DC component by subtracting the mean
-        # y_vec = y_vec - np.mean(y_vec)
-
-        # # Calculate the sampling rate (Assumes evenly spaced time samples)
-        # sampling_rate = 1 / (x_vec[1] - x_vec[0])
-
-        # # Perform the FFT on the limited points
-        # fft_result = rfft(y_vec)
-        # frequencies = rfftfreq(len(y_vec), d=(x_vec[1] - x_vec[0]))
-
-        # # Calculate the magnitude of the FFT result
-        # magnitude = np.abs(fft_result)
-
-        # # Ignore the DC component (frequency = 0) for peak detection
-        # magnitude[0] = 0
-
-        # # Find peaks in the FFT magnitude
-        # peaks, _ = find_peaks(magnitude, height=0)
-
-        # if len(peaks) == 0:
-        #     # If no peaks are found, return 0 (no significant frequency components)
-        #     self.max_frequency = 0
-        #     print("No significant frequency components found.")
-        #     # return self.max_frequency
-
-        # # Identify the peak with the maximum magnitude
-        # max_peak_index = peaks[np.argmax(magnitude[peaks])]
-        # max_frequency = frequencies[max_peak_index]
-
-        # # Store the maximum frequency in the class attribute
-        # self.max_frequency = max_frequency
-
-        # print(f"Max frequency: {self.max_frequency} Hz")
-        # # return self.max_frequency
-
 
     def update_slider_range(self):
         if self.ui.actual_radioButton.isChecked():
@@ -273,11 +235,6 @@ class MainWindow(QtWidgets.QMainWindow):
         t = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 1000)
         
         method = self.ui.methods_comboBox.currentText()
-
-        #  # Ensure high-frequency sampling leads to good interpolation
-        # if self.sampling_frequency >= 2 * self.max_frequency:
-        #     t_high = np.linspace(self.signal.x_vec[0], self.signal.x_vec[-1], 2000)  # Higher resolution for reconstruction
-        #     self.reconstructed_signal = reconstructor.reconstruct_shannon(t_high, self.sampling_frequency)
 
 
         if method == "whittaker_shannon":
@@ -516,37 +473,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(5)))  # Frequency: 4 Hz
             self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(0.5)))  # Amplitude: 1
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase: 180 degrees (π)
-            
-
-
-        # elif test == "Test Case 3":
-        #     self.ui.tableWidget.setRowCount(0)  # Clear previous rows
-
-        #     # Square wave harmonic components for different sampling rates
-        #     sampling_cases = [
-        #         {"Frequency": 1, "Amplitude": 1, "Phase": 0},  # 1 Hz fundamental
-        #         {"Frequency": 3, "Amplitude": 1/3, "Phase": 0},  # 3rd harmonic
-        #         {"Frequency": 5, "Amplitude": 1/5, "Phase": 0},  # 5th harmonic
-        #         {"Frequency": 7, "Amplitude": 1/7, "Phase": 0},  # 7th harmonic
-        #         # Add more harmonics if necessary for the scenario
-        #     ]
-
-        #     # Example case for a 20 Hz sampling rate
-        #     for index, harmonic in enumerate(sampling_cases):
-        #         if self.ui.tableWidget.rowCount() <= index:
-        #             self.ui.tableWidget.insertRow(index)
-        #         self.ui.tableWidget.setItem(index, 0, QTableWidgetItem(str(harmonic["Frequency"])))  # Frequency
-        #         self.ui.tableWidget.setItem(index, 1, QTableWidgetItem(str(harmonic["Amplitude"])))  # Amplitude
-        #         self.ui.tableWidget.setItem(index, 2, QTableWidgetItem(str(harmonic["Phase"])))  # Phase
-
-        #     # Example demonstration messages (optional) to show the difference in reconstruction:
-        #     # At 20 Hz, capture several harmonics and reconstruct the square wave accurately.
-        #     # At 8 Hz, capture limited harmonics, missing details but retaining the basic shape.
-        #     # At 4 Hz, demonstrate the effects of aliasing causing severe distortion.
-
-        #     # If you want to automate more details, such as dynamically changing the sampling rate and plotting the waveforms, additional code may be needed.
-            
-        # # elif test=="Test Case 1":
+ 
 
              
 if __name__ == "__main__":
