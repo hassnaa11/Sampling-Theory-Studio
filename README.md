@@ -22,6 +22,9 @@ This project helps validate the Nyquist rate while showcasing the consequences o
   - Cubic Spline
   - Rational Polynomial Fit (RPF) interpolation
 
+https://github.com/user-attachments/assets/84a4a675-52af-47e4-9003-c13b13309dd6
+
+
 Four graphs are displayed:
 
 1. Original Signal with Sampled Points
@@ -77,6 +80,13 @@ Four graphs are displayed:
     Description: Combines two sinusoids of the same frequency (5Hz) but opposite phases (180° and 0°) with equal amplitudes (1). This scenario explores destructive interference.
 
     Expected Outcome: Demonstrates how phase differences influence signal cancellation and overall amplitude, testing the system's handling of phase-aligned signals.
+
+
+
+
+https://github.com/user-attachments/assets/41312537-610e-4708-9375-5631a8a06560
+
+
 
 ---
 
