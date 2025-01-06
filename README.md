@@ -64,8 +64,19 @@ Four graphs are displayed:
 - Prepares at least three synthetic signal examples:
 
   1. **Case 1**: Mix of 4Hz and 10Hz sinusoidals with amplitudes 5 and 5.
+    Description: This case combines two sinusoids with distinct frequencies (4Hz and 10Hz) but equal amplitudes (5). It simulates a scenario where signals with varying frequencies and similar energy levels interfere.
+
+    Expected Outcome: Demonstrates the behavior of mixed-frequency signals, allowing evaluation of the system's ability to handle and reconstruct signals with frequency separation.
+
   2. **Case 2**: Mix of 6Hz and 4Hz sinusoidals with amplitudes 6 and 6, and the same phase.
-  3. **Case 3**: Mix of 5Hz and 5Hz sinusoidals with amplitudes 1 and 0.5, and phases 90° and 0°.
+    Description: A combination of two sinusoids (6Hz and 4Hz) with identical amplitudes (6) and the same initial phase. This case introduces phase coherence between components.
+
+    Expected Outcome: Highlights the effect of phase alignment on signal reconstruction and the resulting waveform's characteristics.
+
+  3. **Case 3**: Mix of 5Hz and 5Hz sinusoidals with amplitudes 1 and 1, and phases 180° and 0°.
+    Description: Combines two sinusoids of the same frequency (5Hz) but opposite phases (180° and 0°) with equal amplitudes (1). This scenario explores destructive interference.
+
+    Expected Outcome: Demonstrates how phase differences influence signal cancellation and overall amplitude, testing the system's handling of phase-aligned signals.
 
 ---
 

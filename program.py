@@ -464,14 +464,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.tableWidget.insertRow(0)
             self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(str(5)))  # Frequency: 4 Hz
             self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(str(1)))  # Amplitude: 1
-            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(90)))  # Phase: 0
+            self.ui.tableWidget.setItem(0, 2, QTableWidgetItem(str(180)))  # Phase: 0
             icon_item = QtWidgets.QTableWidgetItem()
             self.ui.tableWidget.setItem(0, 3, icon_item)
             icon_item.setIcon(self.mixer.remove_icon)
 
             self.ui.tableWidget.insertRow(1)
             self.ui.tableWidget.setItem(1, 0, QTableWidgetItem(str(5)))  # Frequency: 4 Hz
-            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(0.5)))  # Amplitude: 1
+            self.ui.tableWidget.setItem(1, 1, QTableWidgetItem(str(1)))  # Amplitude: 1
             self.ui.tableWidget.setItem(1, 2, QTableWidgetItem(str(0)))  # Phase: 180 degrees (π)
  
 
